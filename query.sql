@@ -20,8 +20,8 @@ WITH
   FROM
     {{.TableName}}
   WHERE
-    DATE(_PARTITIONTIME, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND execution_date
-    AND DATE(usage_end_time, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND execution_date),
+    DATE(_PARTITIONTIME, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND one_day_before
+    AND DATE(usage_end_time, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND one_day_before),
   details AS (
   SELECT
     service,
