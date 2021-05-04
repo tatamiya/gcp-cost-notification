@@ -43,10 +43,11 @@ func TestCreateNotificationString(t *testing.T) {
 	executionTimestamp := time.Date(2021, 5, 8, 8, 30, 0, 0, time.Local)
 
 	expectedOutput :=
-		`＜5/1 ~ 7 の GCP 利用料金＞
-() 内は前日分
+		`＜5/1 ~ 5/7 の GCP 利用料金＞ ※ () 内は前日分
+
 Total: ¥ 1,000.07 (¥ 400)
-以下サービス別
+
+----- 明細 -----
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
@@ -63,10 +64,11 @@ func TestCreateNotificationAtFirstDayOfMonth(t *testing.T) {
 	executionTimestamp := time.Date(2021, 5, 1, 8, 30, 0, 0, time.Local)
 
 	expectedOutput :=
-		`＜4/1 ~ 30 の GCP 利用料金＞
-() 内は前日分
+		`＜4/1 ~ 4/30 の GCP 利用料金＞ ※ () 内は前日分
+
 Total: ¥ 1,000.07 (¥ 400)
-以下サービス別
+
+----- 明細 -----
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
