@@ -73,9 +73,12 @@ func createSingleReportLine(cost *QueryResult) string {
 	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
-func createNotificationString(costSummary []*QueryResult) string {
+func createNotificationString(costSummary []*QueryResult, executionTimestamp time.Time) string {
 
-	output := "＜5/1 ~ 7 の GCP 利用料金＞\n() 内は前日分"
+	month := executionTimestamp.Month()
+	day := executionTimestamp.Day()
+
+	output := fmt.Sprintf("＜%d/1 ~ %d の GCP 利用料金＞\n() 内は前日分", month, day-1)
 
 	firstLine := costSummary[0]
 	if firstLine.Service != "Total" {
