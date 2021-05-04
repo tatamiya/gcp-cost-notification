@@ -5,8 +5,10 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"os"
 
 	"cloud.google.com/go/bigquery"
+	humanize "github.com/dustin/go-humanize"
 	"google.golang.org/api/iterator"
 )
 
@@ -59,4 +61,44 @@ func sendQueryToBQ(query string, projectID string) ([]*QueryResult, error) {
 	}
 
 	return queryResults, nil
+}
+
+func createSingleReportLine(cost *QueryResult) string {
+	service := cost.Service
+	monthly := humanize.CommafWithDigits(float64(cost.Monthly), 2)
+	yesterday := humanize.CommafWithDigits(float64(cost.Yesterday), 2)
+
+	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
+}
+
+func createNotificationString(costSummary []*QueryResult) string {
+
+	output := "＜5/1 ~ 7 の GCP 利用料金＞\n() 内は前日分"
+
+	firstLine := costSummary[0]
+	if firstLine.Service != "Total" {
+		return "Something Wrong!"
+	}
+	output += createSingleReportLine(firstLine)
+	if len(costSummary) < 1 {
+		return output
+	}
+
+	output += "\n以下サービス別"
+
+	for _, detail := range costSummary[1:] {
+		output += createSingleReportLine(detail)
+	}
+	return output
+}
+
+func CostNotifier() {
+	projectID := os.Getenv("GCP_PROJECT")
+	datasetName := os.Getenv("DATASET_NAME")
+	tableName := os.Getenv("TABLE_NAME")
+
+	fullTableName := fmt.Sprintf("%s.%s.%s", projectID, datasetName, tableName)
+
+	query := buildQuery(fullTableName)
+	_, _ = sendQueryToBQ(query, projectID)
 }

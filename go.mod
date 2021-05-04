@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go/bigquery v1.17.0
+	github.com/dustin/go-humanize v1.0.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/mod v0.4.2 // indirect
