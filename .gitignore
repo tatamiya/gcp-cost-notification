@@ -19,3 +19,4 @@
 # Development configurations
 .vscode
 .env
+env.yaml
