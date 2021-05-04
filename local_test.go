@@ -1,4 +1,4 @@
-package main
+package gcp_cost_notification
 
 import (
 	"context"
