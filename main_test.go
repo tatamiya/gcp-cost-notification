@@ -73,3 +73,11 @@ BigQuery: ¥ 0.07 (¥ 0)`
 	actualOutput := createNotificationString(inputCostSummary, executionTimestamp)
 	assert.EqualValues(t, expectedOutput, actualOutput)
 }
+
+func TestSlackPost(t *testing.T) {
+	inputURL := os.Getenv("SLACK_WEBHOOK_URL")
+	inputMessage := "test\nこれはテスト投稿です。"
+
+	err := sendMessageToSlack(inputURL, inputMessage)
+	assert.Nil(t, err)
+}

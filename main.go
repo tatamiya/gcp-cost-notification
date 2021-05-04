@@ -10,6 +10,7 @@ import (
 
 	"cloud.google.com/go/bigquery"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/slack-go/slack"
 	"google.golang.org/api/iterator"
 )
 
@@ -96,6 +97,14 @@ func createNotificationString(costSummary []*QueryResult, executionTimestamp tim
 		output += createSingleReportLine(detail)
 	}
 	return output
+}
+
+func sendMessageToSlack(webhookURL string, messageText string) error {
+	msg := slack.WebhookMessage{
+		Text: messageText,
+	}
+	err := slack.PostWebhook(webhookURL, &msg)
+	return err
 }
 
 func CostNotifier() {
