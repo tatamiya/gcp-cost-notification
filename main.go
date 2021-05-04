@@ -13,7 +13,8 @@ import (
 )
 
 type QueryParameters struct {
-	TableName string
+	TableName          string
+	ExecutionTimestamp string
 }
 
 type QueryResult struct {
@@ -22,9 +23,9 @@ type QueryResult struct {
 	Yesterday float32
 }
 
-func buildQuery(tableName string) string {
+func buildQuery(tableName string, executionTimestamp string) string {
 
-	params := QueryParameters{tableName}
+	params := QueryParameters{tableName, executionTimestamp}
 	var buf bytes.Buffer
 	t := template.Must(template.ParseFiles("query.sql"))
 	t.Execute(&buf, params)
@@ -99,6 +100,6 @@ func CostNotifier() {
 
 	fullTableName := fmt.Sprintf("%s.%s.%s", projectID, datasetName, tableName)
 
-	query := buildQuery(fullTableName)
+	query := buildQuery(fullTableName, "2020-01-01T09:00:00Z")
 	_, _ = sendQueryToBQ(query, projectID)
 }

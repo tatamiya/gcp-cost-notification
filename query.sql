@@ -1,10 +1,13 @@
+DECLARE execution_date DATE DEFAULT CURRENT_DATE();
+SET execution_date = DATE(TIMESTAMP {{.ExecutionTimestamp}});
+
 WITH
   this_month AS(
   SELECT
     service.description AS service,
     cost AS monthly,
     CASE
-      WHEN DATE(usage_end_time) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) THEN cost
+      WHEN DATE(usage_end_time) = DATE_SUB(execution_date, INTERVAL 1 DAY) THEN cost
     ELSE
     0
   END
@@ -12,8 +15,8 @@ WITH
   FROM
     {{.TableName}}
   WHERE
-    DATE(_PARTITIONTIME) >= DATE_TRUNC(CURRENT_DATE(), MONTH)
-    AND DATE(usage_end_time) >= DATE_TRUNC(CURRENT_DATE(), MONTH) ),
+    DATE(_PARTITIONTIME) >= DATE_TRUNC(execution_date, MONTH)
+    AND DATE(usage_end_time) >= DATE_TRUNC(execution_date, MONTH) ),
   details AS (
   SELECT
     service,
