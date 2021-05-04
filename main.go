@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"time"
 
 	"cloud.google.com/go/bigquery"
 	humanize "github.com/dustin/go-humanize"
@@ -94,12 +95,15 @@ func createNotificationString(costSummary []*QueryResult) string {
 }
 
 func CostNotifier() {
+	currentTimestamp := time.Now()
+
 	projectID := os.Getenv("GCP_PROJECT")
 	datasetName := os.Getenv("DATASET_NAME")
 	tableName := os.Getenv("TABLE_NAME")
 
 	fullTableName := fmt.Sprintf("%s.%s.%s", projectID, datasetName, tableName)
 
-	query := buildQuery(fullTableName, "2020-01-01T09:00:00Z")
+	timestampString := currentTimestamp.Format(time.RFC3339)
+	query := buildQuery(fullTableName, timestampString)
 	_, _ = sendQueryToBQ(query, projectID)
 }
