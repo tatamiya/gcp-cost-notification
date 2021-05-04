@@ -32,10 +32,12 @@ type QueryResult struct {
 
 func buildQuery(tableName string, executionTimestamp string) string {
 
+	fileDir := os.Getenv("FILE_DIRECTORY")
+
 	noEscapeTimestamp := template.HTML(executionTimestamp)
 	params := QueryParameters{tableName, noEscapeTimestamp}
 	var buf bytes.Buffer
-	t := template.Must(template.ParseFiles("query.sql"))
+	t := template.Must(template.ParseFiles("./" + fileDir + "query.sql"))
 	t.Execute(&buf, params)
 
 	return buf.String()
