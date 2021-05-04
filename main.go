@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"log"
 	"os"
 	"time"
 
@@ -14,9 +15,13 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+type PubSubMessage struct {
+	Data []byte `json:"data"`
+}
+
 type QueryParameters struct {
 	TableName          string
-	ExecutionTimestamp string
+	ExecutionTimestamp template.HTML
 }
 
 type QueryResult struct {
@@ -27,7 +32,8 @@ type QueryResult struct {
 
 func buildQuery(tableName string, executionTimestamp string) string {
 
-	params := QueryParameters{tableName, executionTimestamp}
+	noEscapeTimestamp := template.HTML(executionTimestamp)
+	params := QueryParameters{tableName, noEscapeTimestamp}
 	var buf bytes.Buffer
 	t := template.Must(template.ParseFiles("query.sql"))
 	t.Execute(&buf, params)
@@ -107,7 +113,7 @@ func sendMessageToSlack(webhookURL string, messageText string) error {
 	return err
 }
 
-func CostNotifier() {
+func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	currentTimestamp := time.Now()
 
 	projectID := os.Getenv("GCP_PROJECT")
@@ -118,5 +124,19 @@ func CostNotifier() {
 
 	timestampString := currentTimestamp.Format(time.RFC3339)
 	query := buildQuery(fullTableName, timestampString)
-	_, _ = sendQueryToBQ(query, projectID)
+	costSummary, err := sendQueryToBQ(query, projectID)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	messageString := createNotificationString(costSummary, currentTimestamp)
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	err = sendMessageToSlack(webhookURL, messageString)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	return nil
 }

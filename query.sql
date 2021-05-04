@@ -3,7 +3,7 @@ DECLARE execution_date DATE;
 DECLARE one_day_before DATE;
 
 SET timezone = 'Asia/Tokyo';
-SET execution_date = DATE(TIMESTAMP({{.ExecutionTimestamp}}), timezone);
+SET execution_date = DATE(TIMESTAMP("{{.ExecutionTimestamp}}"), timezone);
 SET one_day_before = DATE_SUB(execution_date, INTERVAL 1 DAY);
 
 WITH
@@ -18,7 +18,7 @@ WITH
   END
     AS yesterday
   FROM
-    {{.TableName}}
+    `{{.TableName}}`
   WHERE
     DATE(_PARTITIONTIME, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND one_day_before
     AND DATE(usage_end_time, timezone) BETWEEN DATE_TRUNC(one_day_before, MONTH) AND one_day_before),
