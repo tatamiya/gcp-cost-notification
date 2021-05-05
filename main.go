@@ -82,9 +82,11 @@ func createSingleReportLine(cost *QueryResult) string {
 	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
-func createNotificationString(costSummary []*QueryResult, executionTimestamp time.Time) string {
+func createNotificationString(costSummary []*QueryResult, executionTime time.Time) string {
 
-	oneDayBefore := executionTimestamp.AddDate(0, 0, -1)
+	location, _ := time.LoadLocation("Asia/Tokyo")
+	localizedTime := executionTime.In(location)
+	oneDayBefore := localizedTime.AddDate(0, 0, -1)
 	month := oneDayBefore.Month()
 	day := oneDayBefore.Day()
 
@@ -116,7 +118,7 @@ func sendMessageToSlack(webhookURL string, messageText string) error {
 }
 
 func CostNotifier(ctx context.Context, m PubSubMessage) error {
-	currentTimestamp := time.Now()
+	currentTime := time.Now()
 
 	projectID := os.Getenv("GCP_PROJECT")
 	datasetName := os.Getenv("DATASET_NAME")
@@ -124,7 +126,7 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 
 	fullTableName := fmt.Sprintf("%s.%s.%s", projectID, datasetName, tableName)
 
-	timestampString := currentTimestamp.Format(time.RFC3339)
+	timestampString := currentTime.Format(time.RFC3339)
 	query := buildQuery(fullTableName, timestampString)
 	costSummary, err := sendQueryToBQ(query, projectID)
 	if err != nil {
@@ -132,7 +134,7 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 		return err
 	}
 
-	messageString := createNotificationString(costSummary, currentTimestamp)
+	messageString := createNotificationString(costSummary, currentTime)
 	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
 	err = sendMessageToSlack(webhookURL, messageString)
 	if err != nil {

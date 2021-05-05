@@ -71,6 +71,21 @@ func TestCreateNotificationOnFirstDayOfMonth(t *testing.T) {
 	assert.EqualValues(t, expectedFirstLineOfOutput, actualFirstLineOfOutput)
 }
 
+func TestCreateNotificationInJST(t *testing.T) {
+	inputCostSummary := []*QueryResult{
+		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
+		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
+	}
+	// 2021-05-08 in JST
+	executionTimestamp := time.Date(2021, 5, 7, 23, 00, 0, 0, time.UTC)
+
+	expectedFirstLineOfOutput := "＜5/1 ~ 5/7 の GCP 利用料金＞ ※ () 内は前日分"
+
+	actualOutput := createNotificationString(inputCostSummary, executionTimestamp)
+	actualFirstLineOfOutput := strings.Split(actualOutput, "\n")[0]
+	assert.EqualValues(t, expectedFirstLineOfOutput, actualFirstLineOfOutput)
+}
 func TestSlackPost(t *testing.T) {
 	inputURL := os.Getenv("SLACK_WEBHOOK_URL")
 	inputMessage := "test\nこれはテスト投稿です。"
