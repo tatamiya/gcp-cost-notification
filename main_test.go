@@ -61,7 +61,8 @@ func TestCreateNotificationOnFirstDayOfMonth(t *testing.T) {
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 	}
-	executionTimestamp := time.Date(2021, 5, 1, 8, 30, 0, 0, time.Local)
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	executionTimestamp := time.Date(2021, 5, 1, 8, 30, 0, 0, AsiaTokyo)
 
 	expectedFirstLineOfOutput := "＜4/1 ~ 4/30 の GCP 利用料金＞ ※ () 内は前日分"
 
