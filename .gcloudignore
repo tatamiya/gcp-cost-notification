@@ -13,5 +13,8 @@
 .git
 .gitignore
 
+*_test.go
+README.md
+
 node_modules
 #!include:.gitignore
