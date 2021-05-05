@@ -55,7 +55,7 @@ BigQuery: ¥ 0.07 (¥ 0)`
 	assert.EqualValues(t, expectedOutput, actualOutput)
 }
 
-func TestCreateNotificationAtFirstDayOfMonth(t *testing.T) {
+func TestCreateNotificationOnFirstDayOfMonth(t *testing.T) {
 	inputCostSummary := []*QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
@@ -63,17 +63,11 @@ func TestCreateNotificationAtFirstDayOfMonth(t *testing.T) {
 	}
 	executionTimestamp := time.Date(2021, 5, 1, 8, 30, 0, 0, time.Local)
 
-	expectedOutput :=
-		`＜4/1 ~ 4/30 の GCP 利用料金＞ ※ () 内は前日分
-
-Total: ¥ 1,000.07 (¥ 400)
-
------ 明細 -----
-Cloud SQL: ¥ 1,000 (¥ 400)
-BigQuery: ¥ 0.07 (¥ 0)`
+	expectedFirstLineOfOutput := "＜4/1 ~ 4/30 の GCP 利用料金＞ ※ () 内は前日分"
 
 	actualOutput := createNotificationString(inputCostSummary, executionTimestamp)
-	assert.EqualValues(t, expectedOutput, actualOutput)
+	actualFirstLineOfOutput := strings.Split(actualOutput, "\n")[0]
+	assert.EqualValues(t, expectedFirstLineOfOutput, actualFirstLineOfOutput)
 }
 
 func TestSlackPost(t *testing.T) {
