@@ -101,7 +101,7 @@ func createNotificationString(costSummary []*QueryResult, executionTime time.Tim
 		return output
 	}
 
-	output += "\n\n----- 明細 -----"
+	output += "\n\n----- 内訳 -----"
 
 	for _, detail := range costSummary[1:] {
 		output += createSingleReportLine(detail)

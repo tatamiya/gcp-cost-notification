@@ -47,7 +47,7 @@ func TestCreateNotificationString(t *testing.T) {
 
 Total: ¥ 1,000.07 (¥ 400)
 
------ 明細 -----
+----- 内訳 -----
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
