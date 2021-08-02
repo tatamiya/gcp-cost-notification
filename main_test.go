@@ -34,6 +34,16 @@ func TestSendQueryToBQ(t *testing.T) {
 	assert.EqualValues(t, expectedOutput, actualOutput)
 }
 
+func TestCreateSingleMessageLine(t *testing.T) {
+	sampleQueryResult := &QueryResult{
+		Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0,
+	}
+	expectedLine := "\nCloud SQL: ¥ 1,000 (¥ 400)"
+	actualLine := sampleQueryResult.asMessageLine()
+
+	assert.EqualValues(t, expectedLine, actualLine)
+}
+
 func TestCreateNotificationString(t *testing.T) {
 	inputCostSummary := []*QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},

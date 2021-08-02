@@ -30,6 +30,14 @@ type QueryResult struct {
 	Yesterday float32
 }
 
+func (r *QueryResult) asMessageLine() string {
+	service := r.Service
+	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
+	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
+
+	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
+}
+
 func buildQuery(tableName string, executionTimestamp string) string {
 
 	fileDir := os.Getenv("FILE_DIRECTORY")
@@ -74,14 +82,6 @@ func sendQueryToBQ(query string, projectID string) ([]*QueryResult, error) {
 	return queryResults, nil
 }
 
-func createSingleReportLine(cost *QueryResult) string {
-	service := cost.Service
-	monthly := humanize.CommafWithDigits(float64(cost.Monthly), 2)
-	yesterday := humanize.CommafWithDigits(float64(cost.Yesterday), 2)
-
-	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
-}
-
 func createNotificationString(costSummary []*QueryResult, executionTime time.Time) string {
 
 	location, _ := time.LoadLocation("Asia/Tokyo")
@@ -96,7 +96,7 @@ func createNotificationString(costSummary []*QueryResult, executionTime time.Tim
 	if firstLine.Service != "Total" {
 		return "Something Wrong!"
 	}
-	output += createSingleReportLine(firstLine)
+	output += firstLine.asMessageLine()
 	if len(costSummary) < 1 {
 		return output
 	}
@@ -104,7 +104,7 @@ func createNotificationString(costSummary []*QueryResult, executionTime time.Tim
 	output += "\n\n----- 内訳 -----"
 
 	for _, detail := range costSummary[1:] {
-		output += createSingleReportLine(detail)
+		output += detail.asMessageLine()
 	}
 	return output
 }
