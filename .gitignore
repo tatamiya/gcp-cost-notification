@@ -20,3 +20,6 @@
 .vscode
 .env
 env.yaml
+
+# Artifacts
+.DS_Store
