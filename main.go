@@ -55,6 +55,19 @@ type Billings struct {
 }
 
 func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) *Billings {
+	resultsLength := len(queryResults)
+
+	if resultsLength == 0 {
+		return &Billings{
+			AggregationPeriod: AggregationPeriod{
+				From: period.From,
+				To:   period.To,
+			},
+			Total:    &QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00},
+			Services: []*QueryResult{},
+		}
+
+	}
 	billings := &Billings{
 		AggregationPeriod: AggregationPeriod{
 			From: period.From,

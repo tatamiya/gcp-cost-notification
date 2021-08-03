@@ -44,7 +44,7 @@ func TestCreateSingleMessageLine(t *testing.T) {
 	assert.EqualValues(t, expectedLine, actualLine)
 }
 
-func TestCreateBilling(t *testing.T) {
+func TestCreateBillings(t *testing.T) {
 	inputQueryResults := []*QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
@@ -70,6 +70,42 @@ func TestCreateBilling(t *testing.T) {
 
 	assert.EqualValues(t, expectedBillings, actualBillings)
 }
+
+func TestCreateBillingsFromEmptyQueryResults(t *testing.T) {
+	inputQueryResults := []*QueryResult{}
+	inputReportingPeriod := ReportingPeriod{
+		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+	}
+
+	expectedBillings := &Billings{
+		AggregationPeriod: AggregationPeriod{
+			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+		},
+		Total:    &QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.0},
+		Services: []*QueryResult{},
+	}
+	actualBillings := NewBillings(&inputReportingPeriod, inputQueryResults)
+
+	assert.EqualValues(t, expectedBillings, actualBillings)
+}
+
+//func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
+//	inputQueryResults := []*QueryResult{
+//		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
+//		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
+//		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+//	}
+//	inputReportingPeriod := ReportingPeriod{
+//		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+//		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+//	}
+//
+//	_, err := NewBillings(&inputReportingPeriod, inputQueryResults)
+//
+//	assert.NotNil(t, err)
+//}
 
 func TestCreateNotificationString(t *testing.T) {
 	inputCostSummary := []*QueryResult{
