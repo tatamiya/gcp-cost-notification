@@ -38,6 +38,35 @@ func (r *QueryResult) asMessageLine() string {
 	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
+type ReportingPeriod struct {
+	From time.Time
+	To   time.Time
+}
+
+type AggregationPeriod struct {
+	From time.Time
+	To   time.Time
+}
+
+type Billings struct {
+	AggregationPeriod AggregationPeriod
+	Total             *QueryResult
+	Services          []*QueryResult
+}
+
+func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) *Billings {
+	billings := &Billings{
+		AggregationPeriod: AggregationPeriod{
+			From: period.From,
+			To:   period.To,
+		},
+		Total:    queryResults[0],
+		Services: queryResults[1:],
+	}
+
+	return billings
+}
+
 func buildQuery(tableName string, executionTimestamp string) string {
 
 	fileDir := os.Getenv("FILE_DIRECTORY")
