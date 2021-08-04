@@ -70,8 +70,8 @@ func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billing
 	} else {
 		totalCost = queryResults[0]
 		if totalCost.Service != "Total" {
-			// TODO: Logging to display queryResults.
 			// TODO: Display queryResults in error message.
+			log.Println("Unexpected query results: ", queryResults)
 			return nil, fmt.Errorf("Unexpected query results! The results might not be correctly sorted!")
 		}
 		serviceCosts = queryResults[1:]
