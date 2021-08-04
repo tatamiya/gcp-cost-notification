@@ -55,7 +55,6 @@ type Billings struct {
 }
 
 func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billings, error) {
-	// TODO: Refactoring to create Billings fields one by one.
 	resultsLength := len(queryResults)
 
 	aggregationPeriod := AggregationPeriod{
@@ -63,27 +62,27 @@ func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billing
 		To:   period.To,
 	}
 
+	var totalCost *QueryResult
+	var serviceCosts []*QueryResult
 	if resultsLength == 0 {
-		return &Billings{
-			AggregationPeriod: aggregationPeriod,
-			Total:             &QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00},
-			Services:          []*QueryResult{},
-		}, nil
+		totalCost = &QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00}
+		serviceCosts = []*QueryResult{}
+	} else {
+		totalCost = queryResults[0]
+		if totalCost.Service != "Total" {
+			// TODO: Logging to display queryResults.
+			// TODO: Display queryResults in error message.
+			return nil, fmt.Errorf("Unexpected query results! The results might not be correctly sorted!")
+		}
+		serviceCosts = queryResults[1:]
 	}
 
-	firstLine := queryResults[0]
-	if firstLine.Service != "Total" {
-		// TODO: Logging to display queryResults.
-		// TODO: Display queryResults in error message.
-		return nil, fmt.Errorf("Unexpected query results! The results might not be correctly sorted!")
-	}
-	billings := &Billings{
+	return &Billings{
 		AggregationPeriod: aggregationPeriod,
-		Total:             queryResults[0],
-		Services:          queryResults[1:],
-	}
+		Total:             totalCost,
+		Services:          serviceCosts,
+	}, nil
 
-	return billings, nil
 }
 
 func buildQuery(tableName string, executionTimestamp string) string {
