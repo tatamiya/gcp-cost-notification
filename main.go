@@ -85,6 +85,31 @@ func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billing
 
 }
 
+func (b *Billings) headline() string {
+	from := b.AggregationPeriod.From
+	to := b.AggregationPeriod.To
+
+	monthFrom := from.Month()
+	dayFrom := from.Day()
+
+	monthTo := to.Month()
+	dayTo := to.Day()
+
+	return fmt.Sprintf("＜%d/%d ~ %d/%d の GCP 利用料金＞ ※ () 内は前日分", monthFrom, dayFrom, monthTo, dayTo)
+}
+
+func (b *Billings) detailLines() string {
+	serviceCosts := b.Services
+	if len(serviceCosts) == 0 {
+		return ""
+	}
+	output := "----- 内訳 -----"
+	for _, cost := range serviceCosts {
+		output += cost.asMessageLine()
+	}
+	return output
+}
+
 func buildQuery(tableName string, executionTimestamp string) string {
 
 	fileDir := os.Getenv("FILE_DIRECTORY")
