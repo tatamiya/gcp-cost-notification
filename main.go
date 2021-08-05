@@ -110,6 +110,21 @@ func (b *Billings) detailLines() string {
 	return output
 }
 
+func (b *Billings) AsNotification() string {
+
+	var notification string
+	notification = b.headline() + "\n"
+	notification += b.Total.asMessageLine()
+
+	details := b.detailLines()
+	if b.detailLines() != "" {
+		notification += "\n\n" + details
+
+	}
+
+	return notification
+}
+
 func buildQuery(tableName string, executionTimestamp string) string {
 
 	fileDir := os.Getenv("FILE_DIRECTORY")

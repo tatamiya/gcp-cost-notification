@@ -185,6 +185,51 @@ func TestCreateBlankDetailLineWhenServiceCostIsEmpty(t *testing.T) {
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
+func TestCreateNotificationFromBillings(t *testing.T) {
+	inputBillings := &Billings{
+		AggregationPeriod: AggregationPeriod{
+			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+		},
+		Total: &QueryResult{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+		Services: []*QueryResult{
+			{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
+			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
+		},
+	}
+
+	expectedNotification :=
+		`＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
+
+Total: ¥ 1,000.07 (¥ 400)
+
+----- 内訳 -----
+Cloud SQL: ¥ 1,000 (¥ 400)
+BigQuery: ¥ 0.07 (¥ 0)`
+
+	actualNotification := inputBillings.AsNotification()
+	assert.EqualValues(t, expectedNotification, actualNotification)
+}
+
+func TestCreateNotificationFromBillingsWithNoServiceCosts(t *testing.T) {
+	inputBillings := &Billings{
+		AggregationPeriod: AggregationPeriod{
+			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+		},
+		Total:    &QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00},
+		Services: []*QueryResult{},
+	}
+
+	expectedNotification :=
+		`＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
+
+Total: ¥ 0 (¥ 0)`
+
+	actualNotification := inputBillings.AsNotification()
+	assert.EqualValues(t, expectedNotification, actualNotification)
+}
+
 func TestCreateNotificationString(t *testing.T) {
 	inputCostSummary := []*QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
