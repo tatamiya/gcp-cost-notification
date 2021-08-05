@@ -49,6 +49,10 @@ type AggregationPeriod struct {
 	To   time.Time
 }
 
+func (a *AggregationPeriod) String() string {
+	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
+}
+
 type Billings struct {
 	AggregationPeriod AggregationPeriod
 	Total             *QueryResult
@@ -86,19 +90,6 @@ func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billing
 
 }
 
-func (b *Billings) headline() string {
-	from := b.AggregationPeriod.From
-	to := b.AggregationPeriod.To
-
-	monthFrom := from.Month()
-	dayFrom := from.Day()
-
-	monthTo := to.Month()
-	dayTo := to.Day()
-
-	return fmt.Sprintf("＜%d/%d ~ %d/%d の GCP 利用料金＞ ※ () 内は前日分", monthFrom, dayFrom, monthTo, dayTo)
-}
-
 func (b *Billings) detailLines() string {
 	serviceCosts := b.Services
 	var listOfLines []string
@@ -110,8 +101,7 @@ func (b *Billings) detailLines() string {
 
 func (b *Billings) AsNotification() string {
 
-	var notification string
-	notification = b.headline() + "\n\n"
+	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.AggregationPeriod)
 	notification += b.Total.asMessageLine()
 
 	if len(b.Services) > 0 {

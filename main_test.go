@@ -134,22 +134,12 @@ func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
 	assert.EqualValues(t, "Unexpected query results! The results might not be correctly sorted!", err.Error())
 }
 
-func TestCreateHeadlineCorrectly(t *testing.T) {
-	inputBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
-			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-		},
-		Total: &QueryResult{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		Services: []*QueryResult{
-			{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
-			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
-		},
+func TestAggregationPeriodIntoStringCorrectly(t *testing.T) {
+	period := AggregationPeriod{
+		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
-	expectedHeadline := "＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分"
-
-	actualHeadline := inputBillings.headline()
-	assert.EqualValues(t, expectedHeadline, actualHeadline)
+	assert.EqualValues(t, "5/1 ~ 5/8", period.String())
 }
 
 func TestCreateDetailLinesCorrectly(t *testing.T) {
