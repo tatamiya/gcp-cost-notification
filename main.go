@@ -40,8 +40,18 @@ func (r *QueryResult) asMessageLine() string {
 }
 
 type ReportingPeriod struct {
-	From time.Time
-	To   time.Time
+	TimeZone string
+	From     time.Time
+	To       time.Time
+}
+
+func NewReportingPeriod(reportingDateTime time.Time, timeZone string) ReportingPeriod {
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	return ReportingPeriod{
+		TimeZone: "Asia/Tokyo",
+		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
+		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
+	}
 }
 
 type AggregationPeriod struct {

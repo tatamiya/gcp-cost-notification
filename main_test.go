@@ -279,3 +279,46 @@ func TestSlackPost(t *testing.T) {
 	err := sendMessageToSlack(inputURL, inputMessage)
 	assert.Nil(t, err)
 }
+
+func TestBuildReportingPeriodCorrectly(t *testing.T) {
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	inputDateTime := time.Date(2021, 5, 8, 8, 30, 0, 0, AsiaTokyo)
+
+	expectedReportingPeriod := ReportingPeriod{
+		TimeZone: "Asia/Tokyo",
+		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
+		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
+	}
+	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+
+	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+}
+
+func TestBuildReportingPeriodOnFirstDayOfMonthCorrectly(t *testing.T) {
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	inputDateTime := time.Date(2021, 5, 1, 8, 30, 0, 0, AsiaTokyo)
+
+	expectedReportingPeriod := ReportingPeriod{
+		TimeZone: "Asia/Tokyo",
+		From:     time.Date(2021, 4, 1, 0, 0, 0, 0, AsiaTokyo),
+		To:       time.Date(2021, 4, 30, 0, 0, 0, 0, AsiaTokyo),
+	}
+	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+
+	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+}
+
+func TestBuildReportingPeriodFromDifferentTimeZoneCorrectly(t *testing.T) {
+	// 2021-05-08 in JST
+	inputDateTime := time.Date(2021, 5, 7, 23, 00, 0, 0, time.UTC)
+
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	expectedReportingPeriod := ReportingPeriod{
+		TimeZone: "Asia/Tokyo",
+		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
+		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
+	}
+	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+
+	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+}
