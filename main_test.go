@@ -38,7 +38,7 @@ func TestCreateSingleMessageLine(t *testing.T) {
 	sampleQueryResult := &QueryResult{
 		Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0,
 	}
-	expectedLine := "\nCloud SQL: ¥ 1,000 (¥ 400)"
+	expectedLine := "Cloud SQL: ¥ 1,000 (¥ 400)"
 	actualLine := sampleQueryResult.asMessageLine()
 
 	assert.EqualValues(t, expectedLine, actualLine)
@@ -164,7 +164,7 @@ func TestCreateDetailLinesCorrectly(t *testing.T) {
 			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		},
 	}
-	expectedDetailLines := "----- 内訳 -----\nCloud SQL: ¥ 1,000 (¥ 400)\nBigQuery: ¥ 0.07 (¥ 0)"
+	expectedDetailLines := "Cloud SQL: ¥ 1,000 (¥ 400)\nBigQuery: ¥ 0.07 (¥ 0)"
 
 	actualDetailLines := inputBillings.detailLines()
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)

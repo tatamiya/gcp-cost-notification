@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/bigquery"
@@ -35,7 +36,7 @@ func (r *QueryResult) asMessageLine() string {
 	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
 	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
 
-	return fmt.Sprintf("\n%s: ¥ %s (¥ %s)", service, monthly, yesterday)
+	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
 type ReportingPeriod struct {
@@ -100,26 +101,22 @@ func (b *Billings) headline() string {
 
 func (b *Billings) detailLines() string {
 	serviceCosts := b.Services
-	if len(serviceCosts) == 0 {
-		return ""
-	}
-	output := "----- 内訳 -----"
+	var listOfLines []string
 	for _, cost := range serviceCosts {
-		output += cost.asMessageLine()
+		listOfLines = append(listOfLines, cost.asMessageLine())
 	}
-	return output
+	return strings.Join(listOfLines, "\n")
 }
 
 func (b *Billings) AsNotification() string {
 
 	var notification string
-	notification = b.headline() + "\n"
+	notification = b.headline() + "\n\n"
 	notification += b.Total.asMessageLine()
 
-	details := b.detailLines()
-	if b.detailLines() != "" {
-		notification += "\n\n" + details
-
+	if len(b.Services) > 0 {
+		notification += "\n\n" + "----- 内訳 -----" + "\n"
+		notification += b.detailLines()
 	}
 
 	return notification
@@ -183,7 +180,7 @@ func createNotificationString(costSummary []*QueryResult, executionTime time.Tim
 	if firstLine.Service != "Total" {
 		return "Something Wrong!"
 	}
-	output += firstLine.asMessageLine()
+	output += "\n" + firstLine.asMessageLine()
 	if len(costSummary) < 1 {
 		return output
 	}
@@ -191,7 +188,7 @@ func createNotificationString(costSummary []*QueryResult, executionTime time.Tim
 	output += "\n\n----- 内訳 -----"
 
 	for _, detail := range costSummary[1:] {
-		output += detail.asMessageLine()
+		output += "\n" + detail.asMessageLine()
 	}
 	return output
 }
