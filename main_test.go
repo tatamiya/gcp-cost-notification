@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 )
 
 func TestBuildQuery(t *testing.T) {
@@ -50,7 +51,7 @@ func TestCreateBillings(t *testing.T) {
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 	}
-	inputReportingPeriod := ReportingPeriod{
+	inputReportingPeriod := reportingperiod.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -74,7 +75,7 @@ func TestCreateBillings(t *testing.T) {
 
 func TestCreateBillingsFromEmptyQueryResults(t *testing.T) {
 	inputQueryResults := []*QueryResult{}
-	inputReportingPeriod := ReportingPeriod{
+	inputReportingPeriod := reportingperiod.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -97,7 +98,7 @@ func TestCreateBillingsFromSingleElementQueryResult(t *testing.T) {
 	inputQueryResults := []*QueryResult{
 		{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
 	}
-	inputReportingPeriod := ReportingPeriod{
+	inputReportingPeriod := reportingperiod.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -122,7 +123,7 @@ func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
-	inputReportingPeriod := ReportingPeriod{
+	inputReportingPeriod := reportingperiod.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -278,84 +279,4 @@ func TestSlackPost(t *testing.T) {
 
 	err := sendMessageToSlack(inputURL, inputMessage)
 	assert.Nil(t, err)
-}
-
-func TestBuildReportingPeriodCorrectly(t *testing.T) {
-	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
-	inputDateTime := time.Date(2021, 5, 8, 8, 30, 0, 0, AsiaTokyo)
-
-	expectedReportingPeriod := ReportingPeriod{
-		TimeZone: "Asia/Tokyo",
-		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
-		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
-	}
-	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
-
-	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
-	assert.Nil(t, err)
-}
-
-func TestBuildReportingPeriodOnFirstDayOfMonthCorrectly(t *testing.T) {
-	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
-	inputDateTime := time.Date(2021, 5, 1, 8, 30, 0, 0, AsiaTokyo)
-
-	expectedReportingPeriod := ReportingPeriod{
-		TimeZone: "Asia/Tokyo",
-		From:     time.Date(2021, 4, 1, 0, 0, 0, 0, AsiaTokyo),
-		To:       time.Date(2021, 4, 30, 0, 0, 0, 0, AsiaTokyo),
-	}
-	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
-
-	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
-	assert.Nil(t, err)
-}
-
-func TestBuildReportingPeriodFromJSTToUTCCorrectly(t *testing.T) {
-	// 2021-05-08 in JST
-	inputDateTime := time.Date(2021, 5, 7, 23, 00, 0, 0, time.UTC)
-
-	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
-	expectedReportingPeriod := ReportingPeriod{
-		TimeZone: "Asia/Tokyo",
-		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
-		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
-	}
-	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
-
-	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
-	assert.Nil(t, err)
-}
-
-func TestBuildReportingPeriodFromUTCToJSTCorrectly(t *testing.T) {
-	// 2021-05-06 in UTC
-	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
-	inputDateTime := time.Date(2021, 5, 7, 8, 30, 0, 0, AsiaTokyo)
-
-	utc := time.UTC
-	expectedReportingPeriod := ReportingPeriod{
-		TimeZone: "UTC",
-		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, utc),
-		To:       time.Date(2021, 5, 5, 0, 0, 0, 0, utc),
-	}
-	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "UTC")
-
-	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
-	assert.Nil(t, err)
-}
-
-func TestNewReportingPeriodReturnErrorForInvalidTimeZone(t *testing.T) {
-	inputDateTime := time.Date(2021, 5, 7, 8, 30, 0, 0, time.Local)
-
-	expectedReportingPeriod := ReportingPeriod{
-		TimeZone: time.Local.String(),
-		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-		To:       time.Date(2021, 5, 6, 0, 0, 0, 0, time.Local),
-	}
-
-	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Invalid/TimeZone")
-
-	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
-
-	assert.NotNil(t, err)
-	assert.EqualValues(t, "unknown time zone Invalid/TimeZone", err.Error())
 }

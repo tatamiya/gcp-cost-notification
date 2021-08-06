@@ -13,6 +13,7 @@ import (
 	"cloud.google.com/go/bigquery"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/slack-go/slack"
+	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 	"google.golang.org/api/iterator"
 )
 
@@ -39,32 +40,6 @@ func (r *QueryResult) asMessageLine() string {
 	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
-type ReportingPeriod struct {
-	TimeZone string
-	From     time.Time
-	To       time.Time
-}
-
-func NewReportingPeriod(reportingDateTime time.Time, timeZone string) (ReportingPeriod, error) {
-	tz := timeZone
-	location, err := time.LoadLocation(tz)
-	if err != nil {
-		location = reportingDateTime.Location()
-		tz = location.String()
-	}
-	localizedDateTime := reportingDateTime.In(location)
-	oneDayBefore := localizedDateTime.AddDate(0, 0, -1)
-
-	year := oneDayBefore.Year()
-	month := oneDayBefore.Month()
-	day := oneDayBefore.Day()
-	return ReportingPeriod{
-		TimeZone: tz,
-		From:     time.Date(year, month, 1, 0, 0, 0, 0, location),
-		To:       time.Date(year, month, day, 0, 0, 0, 0, location),
-	}, err
-}
-
 type AggregationPeriod struct {
 	From time.Time
 	To   time.Time
@@ -80,7 +55,7 @@ type Billings struct {
 	Services          []*QueryResult
 }
 
-func NewBillings(period *ReportingPeriod, queryResults []*QueryResult) (*Billings, error) {
+func NewBillings(period *reportingperiod.ReportingPeriod, queryResults []*QueryResult) (*Billings, error) {
 
 	aggregationPeriod := AggregationPeriod{
 		From: period.From,
