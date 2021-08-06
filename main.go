@@ -46,11 +46,18 @@ type ReportingPeriod struct {
 }
 
 func NewReportingPeriod(reportingDateTime time.Time, timeZone string) ReportingPeriod {
-	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	location, _ := time.LoadLocation(timeZone)
+
+	localizedDateTime := reportingDateTime.In(location)
+	oneDayBefore := localizedDateTime.AddDate(0, 0, -1)
+
+	year := oneDayBefore.Year()
+	month := oneDayBefore.Month()
+	day := oneDayBefore.Day()
 	return ReportingPeriod{
-		TimeZone: "Asia/Tokyo",
-		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
-		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
+		TimeZone: timeZone,
+		From:     time.Date(year, month, 1, 0, 0, 0, 0, location),
+		To:       time.Date(year, month, day, 0, 0, 0, 0, location),
 	}
 }
 
