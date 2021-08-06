@@ -308,7 +308,7 @@ func TestBuildReportingPeriodOnFirstDayOfMonthCorrectly(t *testing.T) {
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
 }
 
-func TestBuildReportingPeriodFromDifferentTimeZoneCorrectly(t *testing.T) {
+func TestBuildReportingPeriodFromJSTToUTCCorrectly(t *testing.T) {
 	// 2021-05-08 in JST
 	inputDateTime := time.Date(2021, 5, 7, 23, 00, 0, 0, time.UTC)
 
