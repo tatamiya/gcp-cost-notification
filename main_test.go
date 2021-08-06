@@ -322,3 +322,19 @@ func TestBuildReportingPeriodFromDifferentTimeZoneCorrectly(t *testing.T) {
 
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
 }
+
+func TestBuildReportingPeriodFromUTCToJSTCorrectly(t *testing.T) {
+	// 2021-05-06 in UTC
+	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
+	inputDateTime := time.Date(2021, 5, 7, 8, 30, 0, 0, AsiaTokyo)
+
+	utc := time.UTC
+	expectedReportingPeriod := ReportingPeriod{
+		TimeZone: "UTC",
+		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, utc),
+		To:       time.Date(2021, 5, 5, 0, 0, 0, 0, utc),
+	}
+	actualReportingPeriod := NewReportingPeriod(inputDateTime, "UTC")
+
+	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+}
