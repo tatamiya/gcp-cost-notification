@@ -289,9 +289,10 @@ func TestBuildReportingPeriodCorrectly(t *testing.T) {
 		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
 		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
 	}
-	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
 
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+	assert.Nil(t, err)
 }
 
 func TestBuildReportingPeriodOnFirstDayOfMonthCorrectly(t *testing.T) {
@@ -303,9 +304,10 @@ func TestBuildReportingPeriodOnFirstDayOfMonthCorrectly(t *testing.T) {
 		From:     time.Date(2021, 4, 1, 0, 0, 0, 0, AsiaTokyo),
 		To:       time.Date(2021, 4, 30, 0, 0, 0, 0, AsiaTokyo),
 	}
-	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
 
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+	assert.Nil(t, err)
 }
 
 func TestBuildReportingPeriodFromJSTToUTCCorrectly(t *testing.T) {
@@ -318,9 +320,10 @@ func TestBuildReportingPeriodFromJSTToUTCCorrectly(t *testing.T) {
 		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
 		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),
 	}
-	actualReportingPeriod := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
+	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Asia/Tokyo")
 
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+	assert.Nil(t, err)
 }
 
 func TestBuildReportingPeriodFromUTCToJSTCorrectly(t *testing.T) {
@@ -334,7 +337,8 @@ func TestBuildReportingPeriodFromUTCToJSTCorrectly(t *testing.T) {
 		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, utc),
 		To:       time.Date(2021, 5, 5, 0, 0, 0, 0, utc),
 	}
-	actualReportingPeriod := NewReportingPeriod(inputDateTime, "UTC")
+	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "UTC")
 
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+	assert.Nil(t, err)
 }
