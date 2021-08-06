@@ -342,3 +342,20 @@ func TestBuildReportingPeriodFromUTCToJSTCorrectly(t *testing.T) {
 	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
 	assert.Nil(t, err)
 }
+
+func TestNewReportingPeriodReturnErrorForInvalidTimeZone(t *testing.T) {
+	inputDateTime := time.Date(2021, 5, 7, 8, 30, 0, 0, time.Local)
+
+	expectedReportingPeriod := ReportingPeriod{
+		TimeZone: time.Local.String(),
+		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+		To:       time.Date(2021, 5, 6, 0, 0, 0, 0, time.Local),
+	}
+
+	actualReportingPeriod, err := NewReportingPeriod(inputDateTime, "Invalid/TimeZone")
+
+	assert.EqualValues(t, expectedReportingPeriod, actualReportingPeriod)
+
+	assert.NotNil(t, err)
+	assert.EqualValues(t, "unknown time zone Invalid/TimeZone", err.Error())
+}

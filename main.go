@@ -46,8 +46,12 @@ type ReportingPeriod struct {
 }
 
 func NewReportingPeriod(reportingDateTime time.Time, timeZone string) (ReportingPeriod, error) {
-	location, _ := time.LoadLocation(timeZone)
-
+	tz := timeZone
+	location, err := time.LoadLocation(tz)
+	if err != nil {
+		location = reportingDateTime.Location()
+		tz = location.String()
+	}
 	localizedDateTime := reportingDateTime.In(location)
 	oneDayBefore := localizedDateTime.AddDate(0, 0, -1)
 
@@ -55,10 +59,10 @@ func NewReportingPeriod(reportingDateTime time.Time, timeZone string) (Reporting
 	month := oneDayBefore.Month()
 	day := oneDayBefore.Day()
 	return ReportingPeriod{
-		TimeZone: timeZone,
+		TimeZone: tz,
 		From:     time.Date(year, month, 1, 0, 0, 0, 0, location),
 		To:       time.Date(year, month, day, 0, 0, 0, 0, location),
-	}, nil
+	}, err
 }
 
 type AggregationPeriod struct {
