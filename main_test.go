@@ -100,3 +100,20 @@ func TestReturnErrorWhenBQFailed(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualValues(t, "", actualMessage)
 }
+
+func TestReturnErrorWhenSlackNotificationFailed(t *testing.T) {
+
+	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
+	inputQueryResults := []*db.QueryResult{
+		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
+		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
+		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+	}
+	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	SlackClientStub := notification.NewSlackClientStub(fmt.Errorf("Something Happened!"))
+
+	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+
+	assert.NotNil(t, err)
+	assert.EqualValues(t, "", actualMessage)
+}
