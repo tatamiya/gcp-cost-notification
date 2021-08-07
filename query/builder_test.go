@@ -25,9 +25,9 @@ func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
 	}
 	outputQuery := builder.Build(inputReportingPeriod)
 
-	assert.EqualValues(t, true, strings.Contains(outputQuery, "SELECT"))
-	assert.EqualValues(t, true, strings.Contains(outputQuery, "Asia/Tokyo"))
-	assert.EqualValues(t, true, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"))
-	assert.EqualValues(t, true, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"))
-	assert.EqualValues(t, true, strings.Contains(outputQuery, inputTableID))
+	assert.True(t, strings.Contains(outputQuery, "SELECT"))
+	assert.True(t, strings.Contains(outputQuery, "Asia/Tokyo"))
+	assert.True(t, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"))
+	assert.True(t, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"))
+	assert.True(t, strings.Contains(outputQuery, inputTableID))
 }
