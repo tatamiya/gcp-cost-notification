@@ -55,13 +55,13 @@ func mainProcess(
 		log.Print(err)
 		return "", err
 	}
-	messageString := billings.AsNotification()
+	message := billings.AsNotification()
 
-	err = slackClient.Send(messageString)
+	err = slackClient.Send(message)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
 
-	return messageString, nil
+	return message, nil
 }
