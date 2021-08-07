@@ -24,10 +24,10 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 
 	slackClient := notification.NewSlackClient()
 
-	return MainProcess(currentDateTime, &BQClient, &slackClient)
+	return mainProcess(currentDateTime, &BQClient, &slackClient)
 }
 
-func MainProcess(
+func mainProcess(
 	reportingDateTime time.Time,
 	BQClient db.BQClientInterface,
 	slackClient notification.SlackClientInterface,
