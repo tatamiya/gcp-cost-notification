@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/dustin/go-humanize"
 	"google.golang.org/api/iterator"
 )
 
@@ -13,6 +14,14 @@ type QueryResult struct {
 	Service   string
 	Monthly   float32
 	Yesterday float32
+}
+
+func (r *QueryResult) AsMessageLine() string {
+	service := r.Service
+	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
+	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
+
+	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
 type BQClientInterface interface {
