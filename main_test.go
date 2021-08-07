@@ -86,10 +86,3 @@ func TestCreateNotificationInJST(t *testing.T) {
 	actualFirstLineOfOutput := strings.Split(actualOutput, "\n")[0]
 	assert.EqualValues(t, expectedFirstLineOfOutput, actualFirstLineOfOutput)
 }
-func TestSlackPost(t *testing.T) {
-	inputURL := os.Getenv("SLACK_WEBHOOK_URL")
-	inputMessage := "test\nこれはテスト投稿です。"
-
-	err := sendMessageToSlack(inputURL, inputMessage)
-	assert.Nil(t, err)
-}
