@@ -85,7 +85,7 @@ func TestWithUnsortedQueryResult(t *testing.T) {
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
-	assert.True(t, strings.Contains(err.Error(), "Error in Query Results Parser."))
+	assert.True(t, strings.Contains(err.Error(), "Error in Query Results Parser."), err)
 	assert.EqualValues(t, "", actualMessage)
 }
 
@@ -99,7 +99,7 @@ func TestReturnErrorWhenBQFailed(t *testing.T) {
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
-	assert.True(t, strings.Contains(err.Error(), "Error in Query Execution."))
+	assert.True(t, strings.Contains(err.Error(), "Error in Query Execution."), err)
 	assert.EqualValues(t, "", actualMessage)
 }
 
