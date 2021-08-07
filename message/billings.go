@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tatamiya/gcp-cost-notification/datetime"
 	"github.com/tatamiya/gcp-cost-notification/db"
-	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 )
 
 type AggregationPeriod struct {
@@ -25,7 +25,7 @@ type Billings struct {
 	Services          []*db.QueryResult
 }
 
-func NewBillings(period *reportingperiod.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, error) {
+func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, error) {
 
 	aggregationPeriod := AggregationPeriod{
 		From: period.From,

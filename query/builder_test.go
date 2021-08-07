@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
+	"github.com/tatamiya/gcp-cost-notification/datetime"
 )
 
 func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
@@ -18,7 +18,7 @@ func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
 	}
 
 	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
-	inputReportingPeriod := reportingperiod.ReportingPeriod{
+	inputReportingPeriod := datetime.ReportingPeriod{
 		TimeZone: "Asia/Tokyo",
 		From:     time.Date(2021, 5, 1, 0, 0, 0, 0, AsiaTokyo),
 		To:       time.Date(2021, 5, 7, 0, 0, 0, 0, AsiaTokyo),

@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
+	"github.com/tatamiya/gcp-cost-notification/datetime"
 )
 
 type QueryBuilder struct {
@@ -30,7 +30,7 @@ func NewQueryBuilder() QueryBuilder {
 	}
 }
 
-func (b *QueryBuilder) Build(period reportingperiod.ReportingPeriod) string {
+func (b *QueryBuilder) Build(period datetime.ReportingPeriod) string {
 
 	reportingToTimestamp := period.To.Format(time.RFC3339)
 	reportingDateTo := template.HTML(reportingToTimestamp)

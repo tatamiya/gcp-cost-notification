@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tatamiya/gcp-cost-notification/datetime"
 	"github.com/tatamiya/gcp-cost-notification/db"
-	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 )
 
 func TestCreateBillings(t *testing.T) {
@@ -15,7 +15,7 @@ func TestCreateBillings(t *testing.T) {
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 	}
-	inputReportingPeriod := reportingperiod.ReportingPeriod{
+	inputReportingPeriod := datetime.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -39,7 +39,7 @@ func TestCreateBillings(t *testing.T) {
 
 func TestCreateBillingsFromEmptyQueryResults(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{}
-	inputReportingPeriod := reportingperiod.ReportingPeriod{
+	inputReportingPeriod := datetime.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -62,7 +62,7 @@ func TestCreateBillingsFromSingleElementQueryResult(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
 	}
-	inputReportingPeriod := reportingperiod.ReportingPeriod{
+	inputReportingPeriod := datetime.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -87,7 +87,7 @@ func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
-	inputReportingPeriod := reportingperiod.ReportingPeriod{
+	inputReportingPeriod := datetime.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}

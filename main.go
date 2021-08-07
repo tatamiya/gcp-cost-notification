@@ -5,11 +5,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/tatamiya/gcp-cost-notification/datetime"
 	"github.com/tatamiya/gcp-cost-notification/db"
 	"github.com/tatamiya/gcp-cost-notification/message"
 	"github.com/tatamiya/gcp-cost-notification/notification"
 	"github.com/tatamiya/gcp-cost-notification/query"
-	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 )
 
 type PubSubMessage struct {
@@ -19,7 +19,7 @@ type PubSubMessage struct {
 func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	timeZone := "Asia/Tokyo"
 	currentTime := time.Now()
-	reportingPeriod, err := reportingperiod.NewReportingPeriod(currentTime, timeZone)
+	reportingPeriod, err := datetime.NewReportingPeriod(currentTime, timeZone)
 
 	queryBuilder := query.NewQueryBuilder()
 	query := queryBuilder.Build(reportingPeriod)

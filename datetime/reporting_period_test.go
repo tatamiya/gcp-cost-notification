@@ -1,4 +1,4 @@
-package reportingperiod
+package datetime
 
 import (
 	"testing"
