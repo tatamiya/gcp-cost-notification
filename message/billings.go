@@ -8,7 +8,16 @@ import (
 
 	"github.com/tatamiya/gcp-cost-notification/datetime"
 	"github.com/tatamiya/gcp-cost-notification/db"
+	"github.com/tatamiya/gcp-cost-notification/utils"
 )
+
+func NewResultParserError(message string, err error) *utils.CustomError {
+	return &utils.CustomError{
+		Process: "Query Results Parser",
+		Message: message,
+		Err:     err,
+	}
+}
 
 type AggregationPeriod struct {
 	From time.Time
@@ -43,7 +52,10 @@ func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResul
 		if totalCost.Service != "Total" {
 			// TODO: Display queryResults in error message.
 			log.Println("Unexpected query results: ", queryResults)
-			return nil, fmt.Errorf("Unexpected query results! The results might not be correctly sorted!")
+			return nil, NewResultParserError(
+				"Unexpected query results! The results might not be correctly sorted!",
+				fmt.Errorf("First element of the query results was %s, not Total", totalCost.Service),
+			)
 		}
 		serviceCosts = queryResults[1:]
 	}

@@ -96,5 +96,8 @@ func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Nil(t, actualBillings)
-	assert.EqualValues(t, "Unexpected query results! The results might not be correctly sorted!", err.Error())
+	assert.EqualValues(t,
+		"Error in Query Results Parser. Unexpected query results! The results might not be correctly sorted!: First element of the query results was Cloud SQL, not Total",
+		err.Error(),
+	)
 }
