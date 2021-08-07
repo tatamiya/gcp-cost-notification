@@ -17,9 +17,10 @@ type PubSubMessage struct {
 }
 
 func CostNotifier(ctx context.Context, m PubSubMessage) error {
-	timeZone := "Asia/Tokyo"
-	currentTime := time.Now()
-	reportingPeriod, err := datetime.NewReportingPeriod(currentTime, timeZone)
+	tzConverter := datetime.NewTimeZoneConverter()
+	currentDateTime := tzConverter.From(time.Now())
+
+	reportingPeriod := datetime.NewReportingPeriod(currentDateTime)
 
 	queryBuilder := query.NewQueryBuilder()
 	query := queryBuilder.Build(reportingPeriod)
