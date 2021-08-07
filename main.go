@@ -20,12 +20,24 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	tzConverter := datetime.NewTimeZoneConverter()
 	currentDateTime := tzConverter.From(time.Now())
 
-	reportingPeriod := datetime.NewReportingPeriod(currentDateTime)
+	BQClient := db.NewBQClient()
+
+	slackClient := notification.NewSlackClient()
+
+	return MainProcess(currentDateTime, &BQClient, &slackClient)
+}
+
+func MainProcess(
+	reportingDateTime time.Time,
+	BQClient db.BQClientInterface,
+	slackClient notification.SlackClientInterface,
+) error {
+
+	reportingPeriod := datetime.NewReportingPeriod(reportingDateTime)
 
 	queryBuilder := query.NewQueryBuilder()
 	query := queryBuilder.Build(reportingPeriod)
 
-	BQClient := db.NewBQClient()
 	costSummary, err := BQClient.SendQuery(query)
 	if err != nil {
 		log.Print(err)
@@ -35,7 +47,6 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	billings, err := message.NewBillings(&reportingPeriod, costSummary)
 	messageString := billings.AsNotification()
 
-	slackClient := notification.NewSlackClient()
 	err = slackClient.Send(messageString)
 	if err != nil {
 		log.Print(err)
