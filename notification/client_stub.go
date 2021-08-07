@@ -1,11 +1,13 @@
 package notification
 
+import "github.com/tatamiya/gcp-cost-notification/utils"
+
 type SlackClientStub struct {
-	err error
+	err *utils.CustomError
 }
 
 func NewSlackClientStub(err error) SlackClientStub {
-	var slackError error
+	var slackError *utils.CustomError
 	if err == nil {
 		slackError = nil
 	} else {
@@ -14,6 +16,6 @@ func NewSlackClientStub(err error) SlackClientStub {
 	return SlackClientStub{slackError}
 }
 
-func (c *SlackClientStub) Send(message string) error {
+func (c *SlackClientStub) Send(message string) *utils.CustomError {
 	return c.err
 }

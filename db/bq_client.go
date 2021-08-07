@@ -34,7 +34,7 @@ func (r *QueryResult) AsMessageLine() string {
 }
 
 type BQClientInterface interface {
-	SendQuery(query string) ([]*QueryResult, error)
+	SendQuery(query string) ([]*QueryResult, *utils.CustomError)
 }
 
 type BQClient struct {
@@ -52,7 +52,7 @@ func NewBQClient() BQClient {
 	return BQClient{client: client}
 }
 
-func (c *BQClient) SendQuery(query string) ([]*QueryResult, error) {
+func (c *BQClient) SendQuery(query string) ([]*QueryResult, *utils.CustomError) {
 	var queryResults []*QueryResult
 
 	q := c.client.Query(query)

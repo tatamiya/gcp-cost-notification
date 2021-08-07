@@ -1,12 +1,14 @@
 package db
 
+import "github.com/tatamiya/gcp-cost-notification/utils"
+
 type BQClientStub struct {
 	records []*QueryResult
-	err     error
+	err     *utils.CustomError
 }
 
 func NewBQClientStub(results []*QueryResult, err error) BQClientStub {
-	var queryError error
+	var queryError *utils.CustomError
 	if err == nil {
 		queryError = nil
 	} else {
@@ -17,6 +19,6 @@ func NewBQClientStub(results []*QueryResult, err error) BQClientStub {
 		err:     queryError,
 	}
 }
-func (c *BQClientStub) SendQuery(query string) ([]*QueryResult, error) {
+func (c *BQClientStub) SendQuery(query string) ([]*QueryResult, *utils.CustomError) {
 	return c.records, c.err
 }

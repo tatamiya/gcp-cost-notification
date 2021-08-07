@@ -34,7 +34,7 @@ type Billings struct {
 	Services          []*db.QueryResult
 }
 
-func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, error) {
+func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, *utils.CustomError) {
 
 	aggregationPeriod := AggregationPeriod{
 		From: period.From,

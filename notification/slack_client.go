@@ -16,7 +16,7 @@ func NewSlackError(message string, err error) *utils.CustomError {
 }
 
 type SlackClientInterface interface {
-	Send(message string) error
+	Send(message string) *utils.CustomError
 }
 
 type SlackClient struct {
@@ -28,7 +28,7 @@ func NewSlackClient() SlackClient {
 	return SlackClient{webhookURL: webhookURL}
 }
 
-func (c *SlackClient) Send(message string) error {
+func (c *SlackClient) Send(message string) *utils.CustomError {
 	msg := slack.WebhookMessage{
 		Text: message,
 	}
