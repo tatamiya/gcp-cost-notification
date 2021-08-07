@@ -5,7 +5,13 @@ type SlackClientStub struct {
 }
 
 func NewSlackClientStub(err error) SlackClientStub {
-	return SlackClientStub{err}
+	var slackError error
+	if err == nil {
+		slackError = nil
+	} else {
+		slackError = NewSlackError("Failed", err)
+	}
+	return SlackClientStub{slackError}
 }
 
 func (c *SlackClientStub) Send(message string) error {

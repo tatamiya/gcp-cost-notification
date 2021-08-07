@@ -4,7 +4,16 @@ import (
 	"os"
 
 	"github.com/slack-go/slack"
+	"github.com/tatamiya/gcp-cost-notification/utils"
 )
+
+func NewSlackError(message string, err error) *utils.CustomError {
+	return &utils.CustomError{
+		Process: "Slack Notification",
+		Message: message,
+		Err:     err,
+	}
+}
 
 type SlackClientInterface interface {
 	Send(message string) error
@@ -24,5 +33,11 @@ func (c *SlackClient) Send(message string) error {
 		Text: message,
 	}
 	err := slack.PostWebhook(c.webhookURL, &msg)
-	return err
+	if err != nil {
+		return NewSlackError(
+			"Could not send message!",
+			err,
+		)
+	}
+	return nil
 }
