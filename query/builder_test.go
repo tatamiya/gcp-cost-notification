@@ -14,7 +14,7 @@ func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
 
 	builder := QueryBuilder{
 		tableID:      inputTableID,
-		templatePath: "./query.sql",
+		templatePath: "./template.sql",
 	}
 
 	AsiaTokyo, _ := time.LoadLocation("Asia/Tokyo")
