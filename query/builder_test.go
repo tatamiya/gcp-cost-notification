@@ -9,7 +9,7 @@ import (
 	reportingperiod "github.com/tatamiya/gcp-cost-notification/reporting-period"
 )
 
-func TestBuildQuery(t *testing.T) {
+func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
 	inputTableID := "sample_project.sample_dataset.sample_table"
 
 	builder := QueryBuilder{
@@ -25,8 +25,8 @@ func TestBuildQuery(t *testing.T) {
 	}
 	outputQuery := builder.Build(inputReportingPeriod)
 
+	assert.EqualValues(t, true, strings.Contains(outputQuery, "SELECT"))
 	assert.EqualValues(t, true, strings.Contains(outputQuery, "2021-05-01T00:00:00+09:00"))
 	assert.EqualValues(t, true, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"))
-	assert.EqualValues(t, true, strings.Contains(outputQuery, "SELECT"))
 	assert.EqualValues(t, true, strings.Contains(outputQuery, inputTableID))
 }
