@@ -2,6 +2,7 @@ package gcp_cost_notification
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -98,6 +99,7 @@ func TestReturnErrorWhenBQFailed(t *testing.T) {
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
+	assert.True(t, strings.Contains(err.Error(), "Error in Query Execution."))
 	assert.EqualValues(t, "", actualMessage)
 }
 

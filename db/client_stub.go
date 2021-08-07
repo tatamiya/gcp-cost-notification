@@ -8,7 +8,7 @@ type BQClientStub struct {
 func NewBQClientStub(results []*QueryResult, err error) BQClientStub {
 	return BQClientStub{
 		records: results,
-		err:     err,
+		err:     NewQueryError("Failed", err),
 	}
 }
 func (c *BQClientStub) SendQuery(query string) ([]*QueryResult, error) {

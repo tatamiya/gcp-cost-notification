@@ -7,8 +7,17 @@ import (
 
 	"cloud.google.com/go/bigquery"
 	"github.com/dustin/go-humanize"
+	"github.com/tatamiya/gcp-cost-notification/utils"
 	"google.golang.org/api/iterator"
 )
+
+func NewQueryError(message string, err error) *utils.CustomError {
+	return &utils.CustomError{
+		Process: "Query Execution",
+		Message: message,
+		Err:     err,
+	}
+}
 
 type QueryResult struct {
 	Service   string
@@ -50,7 +59,7 @@ func (c *BQClient) SendQuery(query string) ([]*QueryResult, error) {
 	ctx := context.Background()
 	it, err := q.Read(ctx)
 	if err != nil {
-		return queryResults, fmt.Errorf("client.Query: %v", err)
+		return queryResults, NewQueryError("Failed in executing query", err)
 	}
 
 	for {
@@ -60,7 +69,7 @@ func (c *BQClient) SendQuery(query string) ([]*QueryResult, error) {
 			break
 		}
 		if err != nil {
-			return []*QueryResult{}, err
+			return []*QueryResult{}, NewQueryError("Failed in parsing query results", err)
 		}
 		queryResults = append(queryResults, &result)
 	}
