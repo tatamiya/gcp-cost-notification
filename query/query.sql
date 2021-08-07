@@ -2,7 +2,7 @@ DECLARE timezone STRING;
 DECLARE date_from DATE;
 DECLARE date_to DATE;
 
-SET timezone = 'Asia/Tokyo';
+SET timezone = '{{.TimeZone}}';
 SET date_from = DATE(TIMESTAMP('{{.ReportingDateFrom}}'), timezone);
 SET date_to = DATE(TIMESTAMP('{{.ReportingDateTo}}'), timezone);
 

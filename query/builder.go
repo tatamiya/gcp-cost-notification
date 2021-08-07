@@ -40,10 +40,12 @@ func (b *QueryBuilder) Build(period reportingperiod.ReportingPeriod) string {
 
 	params := struct {
 		TableName         string
+		TimeZone          string
 		ReportingDateFrom template.HTML
 		ReportingDateTo   template.HTML
 	}{
 		TableName:         b.tableID,
+		TimeZone:          period.TimeZone,
 		ReportingDateFrom: reportingDateFrom,
 		ReportingDateTo:   reportingDateTo,
 	}
