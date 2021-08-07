@@ -26,11 +26,3 @@ func (c *SlackClient) Send(message string) error {
 	err := slack.PostWebhook(c.webhookURL, &msg)
 	return err
 }
-
-func sendMessageToSlack(webhookURL string, messageText string) error {
-	msg := slack.WebhookMessage{
-		Text: messageText,
-	}
-	err := slack.PostWebhook(webhookURL, &msg)
-	return err
-}
