@@ -24,14 +24,20 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 
 	slackClient := notification.NewSlackClient()
 
-	return mainProcess(currentDateTime, &BQClient, &slackClient)
+	message, err := mainProcess(currentDateTime, &BQClient, &slackClient)
+	if err == nil {
+		log.Println("Message was successfully sent to Slack!: ", message)
+	} else {
+		log.Println("Failed in sending message!: ", err.Error())
+	}
+	return err
 }
 
 func mainProcess(
 	reportingDateTime time.Time,
 	BQClient db.BQClientInterface,
 	slackClient notification.SlackClientInterface,
-) error {
+) (string, error) {
 
 	reportingPeriod := datetime.NewReportingPeriod(reportingDateTime)
 
@@ -41,7 +47,7 @@ func mainProcess(
 	costSummary, err := BQClient.SendQuery(query)
 	if err != nil {
 		log.Print(err)
-		return err
+		return "", err
 	}
 
 	billings, err := message.NewBillings(&reportingPeriod, costSummary)
@@ -50,8 +56,8 @@ func mainProcess(
 	err = slackClient.Send(messageString)
 	if err != nil {
 		log.Print(err)
-		return err
+		return "", err
 	}
 
-	return nil
+	return messageString, nil
 }

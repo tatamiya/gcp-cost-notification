@@ -20,6 +20,18 @@ func TestRunWholeProcessCorrectly(t *testing.T) {
 	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
-	err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	expectedMessage :=
+		`＜8/1 ~ 8/6 の GCP 利用料金＞ ※ () 内は前日分
+
+Total: ¥ 1,000.07 (¥ 400)
+
+----- 内訳 -----
+Cloud SQL: ¥ 1,000 (¥ 400)
+BigQuery: ¥ 0.07 (¥ 0)`
+
+	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+
 	assert.Nil(t, err)
+	assert.EqualValues(t, expectedMessage, actualMessage)
+
 }
