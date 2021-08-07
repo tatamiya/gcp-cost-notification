@@ -44,13 +44,13 @@ func mainProcess(
 	queryBuilder := query.NewQueryBuilder()
 	query := queryBuilder.Build(reportingPeriod)
 
-	costSummary, err := BQClient.SendQuery(query)
+	queryResult, err := BQClient.SendQuery(query)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
 
-	billings, err := message.NewBillings(&reportingPeriod, costSummary)
+	billings, err := message.NewBillings(&reportingPeriod, queryResult)
 	if err != nil {
 		log.Print(err)
 		return "", err
