@@ -83,5 +83,6 @@ func TestWithUnsortedQueryResult(t *testing.T) {
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
+	assert.EqualValues(t, "Unexpected query results! The results might not be correctly sorted!", err.Error())
 	assert.EqualValues(t, "", actualMessage)
 }
