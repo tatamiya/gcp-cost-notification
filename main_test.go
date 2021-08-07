@@ -1,6 +1,7 @@
 package gcp_cost_notification
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -84,5 +85,18 @@ func TestWithUnsortedQueryResult(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.EqualValues(t, "Unexpected query results! The results might not be correctly sorted!", err.Error())
+	assert.EqualValues(t, "", actualMessage)
+}
+
+func TestReturnErrorWhenBQFailed(t *testing.T) {
+
+	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
+	inputQueryResults := []*db.QueryResult{}
+	BQClientStub := db.NewBQClientStub(inputQueryResults, fmt.Errorf("Something Happened!"))
+	SlackClientStub := notification.NewSlackClientStub(nil)
+
+	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+
+	assert.NotNil(t, err)
 	assert.EqualValues(t, "", actualMessage)
 }
