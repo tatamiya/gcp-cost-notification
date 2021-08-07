@@ -51,6 +51,10 @@ func mainProcess(
 	}
 
 	billings, err := message.NewBillings(&reportingPeriod, costSummary)
+	if err != nil {
+		log.Print(err)
+		return "", err
+	}
 	messageString := billings.AsNotification()
 
 	err = slackClient.Send(messageString)
