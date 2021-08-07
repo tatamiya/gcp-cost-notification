@@ -6,6 +6,10 @@ import (
 	"github.com/slack-go/slack"
 )
 
+type SlackClientInterface interface {
+	Send(message string) error
+}
+
 type SlackClient struct {
 	webhookURL string
 }
