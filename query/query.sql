@@ -3,8 +3,8 @@ DECLARE date_from DATE;
 DECLARE date_to DATE;
 
 SET timezone = 'Asia/Tokyo';
-SET date_from = DATE(TIMESTAMP("{{.ReportingDateFrom}}"), timezone);
-SET date_to = DATE(TIMESTAMP("{{.ReportingDateTo}}"), timezone);
+SET date_from = DATE(TIMESTAMP('{{.ReportingDateFrom}}'), timezone);
+SET date_to = DATE(TIMESTAMP('{{.ReportingDateTo}}'), timezone);
 
 WITH
   this_month AS(

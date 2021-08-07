@@ -26,7 +26,7 @@ func NewQueryBuilder() QueryBuilder {
 
 	return QueryBuilder{
 		tableID:      tableID,
-		templatePath: "./" + fileDir + "query.sql",
+		templatePath: "./" + fileDir + "query/query.sql",
 	}
 }
 
