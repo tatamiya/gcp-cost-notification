@@ -9,7 +9,7 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/db"
 )
 
-func TestCreateBillings(t *testing.T) {
+func TestCreateBillingsCorrectly(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
@@ -37,7 +37,7 @@ func TestCreateBillings(t *testing.T) {
 	assert.EqualValues(t, expectedBillings, actualBillings)
 }
 
-func TestCreateBillingsFromEmptyQueryResults(t *testing.T) {
+func TestBillingsFromEmptyQueryResultHasZeroTotalCost(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{}
 	inputReportingPeriod := datetime.ReportingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -58,7 +58,7 @@ func TestCreateBillingsFromEmptyQueryResults(t *testing.T) {
 	assert.EqualValues(t, expectedBillings, actualBillings)
 }
 
-func TestCreateBillingsFromSingleElementQueryResult(t *testing.T) {
+func TestBillingsFromSingleElementQueryResultHasEmptyServiceCosts(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
 	}
@@ -81,7 +81,7 @@ func TestCreateBillingsFromSingleElementQueryResult(t *testing.T) {
 	assert.EqualValues(t, expectedBillings, actualBillings)
 }
 
-func TestBillingNotCreatedFromUnsortedQueryResults(t *testing.T) {
+func TestNewBillingsReturnErrorWhenQueryResultsUnexpectedlyOrderd(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
