@@ -11,14 +11,17 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/notification"
 )
 
+var InputReportingDateTime time.Time = time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
+var InputQueryResults []*db.QueryResult = []*db.QueryResult{
+	{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+	{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
+	{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
+}
+
 func TestRunWholeProcessCorrectly(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
-	inputQueryResults := []*db.QueryResult{
-		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
-		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
-	}
+	reportingDateTime := InputReportingDateTime
+	inputQueryResults := InputQueryResults
 	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
@@ -40,12 +43,8 @@ BigQuery: ¥ 0.07 (¥ 0)`
 func TestDisplayPreviousMonthConstsOnFirstDayOfMonth(t *testing.T) {
 
 	reportingDateTime := time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local)
-	inputQueryResults := []*db.QueryResult{
-		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
-		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
-	}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+
+	BQClientStub := db.NewBQClientStub(InputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	expectedMessage :=
@@ -65,7 +64,6 @@ BigQuery: ¥ 0.07 (¥ 0)`
 
 func TestWithNoServiceCosts(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
@@ -75,7 +73,7 @@ func TestWithNoServiceCosts(t *testing.T) {
 	expectedMessage :=
 		"＜8/1 ~ 8/6 の GCP 利用料金＞ ※ () 内は前日分\n\nTotal: ¥ 1,000.07 (¥ 400)"
 
-	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.Nil(t, err)
 	assert.EqualValues(t, expectedMessage, actualMessage)
@@ -83,7 +81,6 @@ func TestWithNoServiceCosts(t *testing.T) {
 
 func TestWithEmptyQueryResult(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
 	inputQueryResults := []*db.QueryResult{}
 	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
@@ -91,7 +88,7 @@ func TestWithEmptyQueryResult(t *testing.T) {
 	expectedMessage :=
 		"＜8/1 ~ 8/6 の GCP 利用料金＞ ※ () 内は前日分\n\nTotal: ¥ 0 (¥ 0)"
 
-	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.Nil(t, err)
 	assert.EqualValues(t, expectedMessage, actualMessage)
@@ -99,7 +96,6 @@ func TestWithEmptyQueryResult(t *testing.T) {
 
 func TestWithUnsortedQueryResult(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
@@ -108,7 +104,7 @@ func TestWithUnsortedQueryResult(t *testing.T) {
 	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
-	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
 	assert.True(t, strings.Contains(err.Error(), "Error in Query Results Parser."), err)
@@ -117,12 +113,10 @@ func TestWithUnsortedQueryResult(t *testing.T) {
 
 func TestReturnErrorWhenBQFailed(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
-	inputQueryResults := []*db.QueryResult{}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, fmt.Errorf("Something Happened!"))
+	BQClientStub := db.NewBQClientStub([]*db.QueryResult{}, fmt.Errorf("Something Happened!"))
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
-	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
 	assert.True(t, strings.Contains(err.Error(), "Error in Query Execution."), err)
@@ -131,16 +125,10 @@ func TestReturnErrorWhenBQFailed(t *testing.T) {
 
 func TestReturnErrorWhenSlackNotificationFailed(t *testing.T) {
 
-	reportingDateTime := time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
-	inputQueryResults := []*db.QueryResult{
-		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
-		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
-	}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	BQClientStub := db.NewBQClientStub(InputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(fmt.Errorf("Something Happened!"))
 
-	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
+	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
 	assert.True(t, strings.Contains(err.Error(), "Error in Slack Notification."), err)
