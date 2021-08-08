@@ -9,15 +9,17 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/db"
 )
 
+var InputReportingPeriod datetime.ReportingPeriod = datetime.ReportingPeriod{
+	From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
+	To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
+}
+
 func TestCreateBillingsCorrectly(t *testing.T) {
+	inputReportingPeriod := InputReportingPeriod
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
-	}
-	inputReportingPeriod := datetime.ReportingPeriod{
-		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
 
 	expectedBillings := &Billings{
@@ -39,46 +41,32 @@ func TestCreateBillingsCorrectly(t *testing.T) {
 
 func TestBillingsFromEmptyQueryResultHasZeroTotalCost(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{}
-	inputReportingPeriod := datetime.ReportingPeriod{
-		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-	}
 
-	expectedBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
-			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-		},
-		Total:    &db.QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.0},
-		Services: []*db.QueryResult{},
-	}
-	actualBillings, err := NewBillings(&inputReportingPeriod, inputQueryResults)
+	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, expectedBillings, actualBillings)
+	assert.EqualValues(
+		t,
+		db.QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.0},
+		*actualBillings.Total,
+	)
+	assert.EqualValues(t, []*db.QueryResult{}, actualBillings.Services)
 }
 
 func TestBillingsFromSingleElementQueryResultHasEmptyServiceCosts(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
 	}
-	inputReportingPeriod := datetime.ReportingPeriod{
-		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-	}
 
-	expectedBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
-			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-		},
-		Total:    &db.QueryResult{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
-		Services: []*db.QueryResult{},
-	}
-	actualBillings, err := NewBillings(&inputReportingPeriod, inputQueryResults)
+	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, expectedBillings, actualBillings)
+	assert.EqualValues(
+		t,
+		db.QueryResult{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
+		*actualBillings.Total,
+	)
+	assert.EqualValues(t, []*db.QueryResult{}, actualBillings.Services)
 }
 
 func TestNewBillingsReturnErrorWhenQueryResultsUnexpectedlyOrderd(t *testing.T) {
@@ -87,12 +75,8 @@ func TestNewBillingsReturnErrorWhenQueryResultsUnexpectedlyOrderd(t *testing.T) 
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
-	inputReportingPeriod := datetime.ReportingPeriod{
-		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
-		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
-	}
 
-	actualBillings, err := NewBillings(&inputReportingPeriod, inputQueryResults)
+	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
 
 	assert.NotNil(t, err)
 	assert.Nil(t, actualBillings)
