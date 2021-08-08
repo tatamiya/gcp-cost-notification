@@ -33,8 +33,36 @@ FILE_DIRECTORY: "serverless_function_source_code/" # this should be fixed
 TIMEZONE: <Your TimeZone. e.g. Asia/Tokyo>
 ```
 
+## Test Commands
+
+Before executing test commands, environment variables must be set in `.env` file.
+
+### Unit Tests (short mode)
+
+Execute unit tests which have no interaction with outer services (BigQuery and Slack).
+
+```sh
+make test-short
+```
+
+### All Tests (including BigQuery and Slack communication)
+
+```sh
+make test-all
+```
+
+### Local Runner
+
+Run the whole process from your local environment.
+
+```sh
+make local-run
+```
+
 ## Deploy Command
 
-```
-gcloud functions deploy CostNotifier --env-vars-file env.yaml --trigger-topic <Pub/Sub topic name> --region=<region> --runtime=go113
+Set `REGION` and `TRIGGER_TOPIC` variables in Makefile and execute this command:
+
+```sh
+make deploy
 ```
