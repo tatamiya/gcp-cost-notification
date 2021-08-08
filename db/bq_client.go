@@ -25,6 +25,10 @@ type QueryResult struct {
 	Yesterday float32
 }
 
+func (r *QueryResult) String() string {
+	return fmt.Sprintf("{Service: %s, Monthly: %f, Yesterday: %f}", r.Service, r.Monthly, r.Yesterday)
+}
+
 func (r *QueryResult) AsMessageLine() string {
 	service := r.Service
 	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
