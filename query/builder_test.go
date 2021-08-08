@@ -27,7 +27,7 @@ func TestRenderQueryFromTemplateCorrectly(t *testing.T) {
 
 	assert.True(t, strings.Contains(outputQuery, "SELECT"), outputQuery)
 	assert.True(t, strings.Contains(outputQuery, "Asia/Tokyo"), outputQuery)
-	assert.True(t, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"), outputQuery)
+	assert.True(t, strings.Contains(outputQuery, "2021-05-01T00:00:00+09:00"), outputQuery)
 	assert.True(t, strings.Contains(outputQuery, "2021-05-07T00:00:00+09:00"), outputQuery)
 	assert.True(t, strings.Contains(outputQuery, inputTableID), outputQuery)
 }
