@@ -62,7 +62,7 @@ BigQuery: ¥ 0.07 (¥ 0)`
 	assert.EqualValues(t, expectedMessage, actualMessage)
 }
 
-func TestWithNoServiceCosts(t *testing.T) {
+func TestNotDisplayServiceCostsWhenQueryResultHasNoServiceCosts(t *testing.T) {
 
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
@@ -79,7 +79,7 @@ func TestWithNoServiceCosts(t *testing.T) {
 	assert.EqualValues(t, expectedMessage, actualMessage)
 }
 
-func TestWithEmptyQueryResult(t *testing.T) {
+func TestDisplayZeroTotalCostWhenQueryResultIsEmpty(t *testing.T) {
 
 	inputQueryResults := []*db.QueryResult{}
 	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
@@ -94,7 +94,7 @@ func TestWithEmptyQueryResult(t *testing.T) {
 	assert.EqualValues(t, expectedMessage, actualMessage)
 }
 
-func TestWithUnsortedQueryResult(t *testing.T) {
+func TestReturnErrorWhenQueryResultIsUnexpectedlySorted(t *testing.T) {
 
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
