@@ -14,7 +14,9 @@
 .gitignore
 
 *_test.go
+*_stub.go
 README.md
+Makefile
 
 node_modules
 #!include:.gitignore
