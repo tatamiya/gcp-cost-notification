@@ -18,6 +18,7 @@ This system uses
 - [Export Cloud Billing data to BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup)
 - [Create Pub/Sub topic](https://cloud.google.com/pubsub/docs/quickstart-console)
 - [Set Cloud Scheduler](https://cloud.google.com/scheduler/docs/quickstart)
+- [Make Slack app and get Incoming Webhook URI](https://api.slack.com/messaging/webhooks)
 
 ## Enviroment Variables
 
