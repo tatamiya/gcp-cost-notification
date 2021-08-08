@@ -98,7 +98,7 @@ func TestReturnErrorWhenQueryResultIsUnexpectedlySorted(t *testing.T) {
 	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.NotNil(t, err)
-	assert.True(t, strings.Contains(err.Error(), "Error in Query Results Parser."), err)
+	assert.True(t, strings.Contains(err.Error(), "Error in Query Results Validation."), err)
 	assert.EqualValues(t, "", actualMessage)
 }
 

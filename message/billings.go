@@ -13,7 +13,7 @@ import (
 
 func NewResultParserError(message string, err error) *utils.CustomError {
 	return &utils.CustomError{
-		Process: "Query Results Parser",
+		Process: "Query Results Validation",
 		Message: message,
 		Err:     err,
 	}
