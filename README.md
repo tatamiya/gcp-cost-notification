@@ -30,6 +30,7 @@ DATASET_NAME: <BQ dataset name>
 TABLE_NAME: <BQ table name>
 SLACK_WEBHOOK_URL: <slack webhook url>
 FILE_DIRECTORY: "serverless_function_source_code/" # this should be fixed
+TIMEZONE: <Your TimeZone. e.g. Asia/Tokyo>
 ```
 
 ## Deploy Command
