@@ -47,19 +47,10 @@ func TestDisplayPreviousMonthConstsOnFirstDayOfMonth(t *testing.T) {
 	BQClientStub := db.NewBQClientStub(InputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
-	expectedMessage :=
-		`＜7/1 ~ 7/31 の GCP 利用料金＞ ※ () 内は前日分
-
-Total: ¥ 1,000.07 (¥ 400)
-
------ 内訳 -----
-Cloud SQL: ¥ 1,000 (¥ 400)
-BigQuery: ¥ 0.07 (¥ 0)`
-
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, expectedMessage, actualMessage)
+	assert.True(t, strings.Contains(actualMessage, "＜7/1 ~ 7/31 の GCP 利用料金＞"), actualMessage)
 }
 
 func TestNotDisplayServiceCostsWhenQueryResultHasNoServiceCosts(t *testing.T) {
