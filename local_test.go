@@ -8,6 +8,9 @@ import (
 )
 
 func TestCostNotifier(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	m := PubSubMessage{
 		Data: []byte(""),
 	}

@@ -19,6 +19,9 @@ func TestCreateSingleMessageLine(t *testing.T) {
 }
 
 func TestSendQueryToBQ(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	projectID := os.Getenv("GCP_PROJECT")
 	inputQuery := fmt.Sprintf("SELECT * FROM `%s.gcp_costs.test_cost_notiification`", projectID)
 

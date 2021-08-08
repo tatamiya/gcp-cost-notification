@@ -7,6 +7,9 @@ import (
 )
 
 func TestSlackPost(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	testClient := NewSlackClient()
 	inputMessage := "test\nこれはテスト投稿です。"
 
