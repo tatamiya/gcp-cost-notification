@@ -43,7 +43,7 @@ Before executing test commands, environment variables must be set in `.env` file
 Execute unit tests which have no interaction with outer services (BigQuery and Slack).
 
 ```sh
-make test-short
+make test
 ```
 
 ### All Tests (including BigQuery and Slack communication)
