@@ -2,9 +2,9 @@
 
 Send notification to Slack on GCP costs.
 
-![](architecture.png)
+![](images/architecture.png)
 
-![](sample_image.png)
+![](images/sample_image.png)
 
 
 This system uses
