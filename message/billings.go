@@ -76,7 +76,7 @@ func (b *Billings) detailLines() string {
 	return strings.Join(listOfLines, "\n")
 }
 
-func (b *Billings) AsNotification() string {
+func (b *Billings) AsMessage() string {
 
 	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.AggregationPeriod)
 	notification += b.Total.AsMessageLine()

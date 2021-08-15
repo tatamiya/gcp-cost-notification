@@ -71,7 +71,7 @@ Total: ¥ 1,000.07 (¥ 400)
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
-	actualNotification := inputBillings.AsNotification()
+	actualNotification := inputBillings.AsMessage()
 	assert.EqualValues(t, expectedNotification, actualNotification)
 }
 
@@ -90,6 +90,6 @@ func TestCreateNotificationFromBillingsWithNoServiceCosts(t *testing.T) {
 
 Total: ¥ 0 (¥ 0)`
 
-	actualNotification := inputBillings.AsNotification()
+	actualNotification := inputBillings.AsMessage()
 	assert.EqualValues(t, expectedNotification, actualNotification)
 }

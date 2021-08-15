@@ -47,8 +47,7 @@ func mainProcess(
 	queryResult, err := BQClient.SendQuery(query)
 	if err != nil {
 		log.Print(err)
-		errorMessage := err.AsSlackMessage()
-		slackError := slackClient.Send(errorMessage)
+		slackError := slackClient.Send(err)
 		if slackError != nil {
 			log.Println("Error notification to Slack also failed!: ", slackError.Error())
 		}
@@ -58,20 +57,18 @@ func mainProcess(
 	billings, err := message.NewBillings(&reportingPeriod, queryResult)
 	if err != nil {
 		log.Print(err)
-		errorMessage := err.AsSlackMessage()
-		slackError := slackClient.Send(errorMessage)
+		slackError := slackClient.Send(err)
 		if slackError != nil {
 			log.Println("Error notification to Slack also failed!: ", slackError.Error())
 		}
 		return "", err
 	}
-	message := billings.AsNotification()
 
-	err = slackClient.Send(message)
+	err = slackClient.Send(billings)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
 
-	return message, nil
+	return billings.AsMessage(), nil
 }
