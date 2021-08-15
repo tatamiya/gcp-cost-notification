@@ -37,10 +37,6 @@ func (r *QueryResult) AsMessageLine() string {
 	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
-type BQClientInterface interface {
-	SendQuery(query string) ([]*QueryResult, *utils.CustomError)
-}
-
 type BQClient struct {
 	client *bigquery.Client
 }

@@ -34,13 +34,17 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	return err
 }
 
+type BQClientInterface interface {
+	SendQuery(query string) ([]*db.QueryResult, *utils.CustomError)
+}
+
 type SlackClientInterface interface {
 	Send(messenger notification.Messenger) (string, *utils.CustomError)
 }
 
 func mainProcess(
 	reportingDateTime time.Time,
-	BQClient db.BQClientInterface,
+	BQClient BQClientInterface,
 	slackClient SlackClientInterface,
 ) (string, error) {
 
