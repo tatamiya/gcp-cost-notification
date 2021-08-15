@@ -1,8 +1,11 @@
 # gcp-cost-notification
 
+Send notification to Slack on GCP costs.
+
+![](architecture.png)
+
 ![](sample_image.png)
 
-Send notification to Slack on GCP costs.
 
 This system uses
 
