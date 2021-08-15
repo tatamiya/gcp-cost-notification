@@ -15,10 +15,6 @@ func NewSlackError(message string, err error) *utils.CustomError {
 	}
 }
 
-type SlackClientInterface interface {
-	Send(messenger Messenger) *utils.CustomError
-}
-
 type Messenger interface {
 	AsMessage() string
 }

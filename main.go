@@ -10,6 +10,7 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/message"
 	"github.com/tatamiya/gcp-cost-notification/notification"
 	"github.com/tatamiya/gcp-cost-notification/query"
+	"github.com/tatamiya/gcp-cost-notification/utils"
 )
 
 type PubSubMessage struct {
@@ -33,10 +34,14 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	return err
 }
 
+type SlackClientInterface interface {
+	Send(messenger notification.Messenger) *utils.CustomError
+}
+
 func mainProcess(
 	reportingDateTime time.Time,
 	BQClient db.BQClientInterface,
-	slackClient notification.SlackClientInterface,
+	slackClient SlackClientInterface,
 ) (string, error) {
 
 	reportingPeriod := datetime.NewReportingPeriod(reportingDateTime)
