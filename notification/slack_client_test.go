@@ -23,6 +23,7 @@ func TestSlackPost(t *testing.T) {
 		message: "test\nこれはテスト投稿です。",
 	}
 
-	err := testClient.Send(&testMessenger)
+	sentMessage, err := testClient.Send(&testMessenger)
 	assert.Nil(t, err)
+	assert.EqualValues(t, "test\nこれはテスト投稿です。", sentMessage)
 }

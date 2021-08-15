@@ -16,6 +16,6 @@ func NewSlackClientStub(err error) SlackClientStub {
 	return SlackClientStub{slackError}
 }
 
-func (c *SlackClientStub) Send(messenger Messenger) *utils.CustomError {
-	return c.err
+func (c *SlackClientStub) Send(messenger Messenger) (string, *utils.CustomError) {
+	return messenger.AsMessage(), c.err
 }

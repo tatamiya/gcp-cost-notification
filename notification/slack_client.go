@@ -28,17 +28,17 @@ func NewSlackClient() SlackClient {
 	return SlackClient{webhookURL: webhookURL}
 }
 
-func (c *SlackClient) Send(messenger Messenger) *utils.CustomError {
+func (c *SlackClient) Send(messenger Messenger) (string, *utils.CustomError) {
 	message := messenger.AsMessage()
 	msg := slack.WebhookMessage{
 		Text: message,
 	}
 	err := slack.PostWebhook(c.webhookURL, &msg)
 	if err != nil {
-		return NewSlackError(
+		return "", NewSlackError(
 			"Could not send message!",
 			err,
 		)
 	}
-	return nil
+	return message, nil
 }

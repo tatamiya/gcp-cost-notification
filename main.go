@@ -35,7 +35,7 @@ func CostNotifier(ctx context.Context, m PubSubMessage) error {
 }
 
 type SlackClientInterface interface {
-	Send(messenger notification.Messenger) *utils.CustomError
+	Send(messenger notification.Messenger) (string, *utils.CustomError)
 }
 
 func mainProcess(
@@ -52,7 +52,7 @@ func mainProcess(
 	queryResult, err := BQClient.SendQuery(query)
 	if err != nil {
 		log.Print(err)
-		slackError := slackClient.Send(err)
+		_, slackError := slackClient.Send(err)
 		if slackError != nil {
 			log.Println("Error notification to Slack also failed!: ", slackError.Error())
 		}
@@ -62,18 +62,18 @@ func mainProcess(
 	billings, err := message.NewBillings(&reportingPeriod, queryResult)
 	if err != nil {
 		log.Print(err)
-		slackError := slackClient.Send(err)
+		_, slackError := slackClient.Send(err)
 		if slackError != nil {
 			log.Println("Error notification to Slack also failed!: ", slackError.Error())
 		}
 		return "", err
 	}
 
-	err = slackClient.Send(billings)
+	sentMessage, err := slackClient.Send(billings)
 	if err != nil {
 		log.Print(err)
 		return "", err
 	}
 
-	return billings.AsMessage(), nil
+	return sentMessage, nil
 }
