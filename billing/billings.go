@@ -11,7 +11,7 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/utils"
 )
 
-func NewResultParserError(message string, err error) *utils.CustomError {
+func NewResultValidationError(message string, err error) *utils.CustomError {
 	return &utils.CustomError{
 		Process: "Query Results Validation",
 		Message: message,
@@ -51,7 +51,7 @@ func NewInvoice(period *datetime.ReportingPeriod, queryResults []*db.QueryResult
 		totalCost = queryResults[0]
 		if totalCost.Service != "Total" {
 			log.Printf("Unexpected query results: %v", queryResults)
-			return nil, NewResultParserError(
+			return nil, NewResultValidationError(
 				"Unexpected query results! The results might not be correctly sorted!",
 				fmt.Errorf("First element of the query results was %s, not Total", totalCost.Service),
 			)
