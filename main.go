@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/tatamiya/gcp-cost-notification/billing"
 	"github.com/tatamiya/gcp-cost-notification/datetime"
 	"github.com/tatamiya/gcp-cost-notification/db"
-	"github.com/tatamiya/gcp-cost-notification/message"
 	"github.com/tatamiya/gcp-cost-notification/notification"
 	"github.com/tatamiya/gcp-cost-notification/query"
 	"github.com/tatamiya/gcp-cost-notification/utils"
@@ -63,7 +63,7 @@ func mainProcess(
 		return "", err
 	}
 
-	billings, err := message.NewBillings(&reportingPeriod, queryResult)
+	billings, err := billing.NewBillings(&reportingPeriod, queryResult)
 	if err != nil {
 		log.Print(err)
 		_, slackError := slackClient.Send(err)
