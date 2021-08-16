@@ -85,7 +85,7 @@ func TestDisplayZeroTotalCostWhenQueryResultIsEmpty(t *testing.T) {
 	assert.EqualValues(t, expectedMessage, actualMessage)
 }
 
-func TestReturnErrorWhenQueryResultIsUnexpectedlySorted(t *testing.T) {
+func TestReturnErrorWhenQueryResultIsUnexpectedlyOrdered(t *testing.T) {
 
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
