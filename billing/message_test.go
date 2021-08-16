@@ -8,8 +8,8 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/db"
 )
 
-func TestAggregationPeriodIntoStringCorrectly(t *testing.T) {
-	period := AggregationPeriod{
+func TestBillingPeriodIntoStringCorrectly(t *testing.T) {
+	period := BillingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
@@ -17,8 +17,8 @@ func TestAggregationPeriodIntoStringCorrectly(t *testing.T) {
 }
 
 func TestCreateDetailLinesCorrectly(t *testing.T) {
-	inputBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
+	inputInvoice := &Invoice{
+		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
@@ -30,13 +30,13 @@ func TestCreateDetailLinesCorrectly(t *testing.T) {
 	}
 	expectedDetailLines := "Cloud SQL: ¥ 1,000 (¥ 400)\nBigQuery: ¥ 0.07 (¥ 0)"
 
-	actualDetailLines := inputBillings.detailLines()
+	actualDetailLines := inputInvoice.detailLines()
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
 func TestCreateBlankDetailLineWhenServiceCostIsEmpty(t *testing.T) {
-	inputBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
+	inputInvoice := &Invoice{
+		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
@@ -45,13 +45,13 @@ func TestCreateBlankDetailLineWhenServiceCostIsEmpty(t *testing.T) {
 	}
 	expectedDetailLines := ""
 
-	actualDetailLines := inputBillings.detailLines()
+	actualDetailLines := inputInvoice.detailLines()
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
-func TestCreateNotificationFromBillings(t *testing.T) {
-	inputBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
+func TestCreateNotificationFromInvoice(t *testing.T) {
+	inputInvoice := &Invoice{
+		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
@@ -71,13 +71,13 @@ Total: ¥ 1,000.07 (¥ 400)
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
-	actualNotification := inputBillings.AsMessage()
+	actualNotification := inputInvoice.AsMessage()
 	assert.EqualValues(t, expectedNotification, actualNotification)
 }
 
-func TestCreateNotificationFromBillingsWithNoServiceCosts(t *testing.T) {
-	inputBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
+func TestCreateNotificationFromInvoiceWithNoServiceCosts(t *testing.T) {
+	inputInvoice := &Invoice{
+		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
@@ -90,6 +90,6 @@ func TestCreateNotificationFromBillingsWithNoServiceCosts(t *testing.T) {
 
 Total: ¥ 0 (¥ 0)`
 
-	actualNotification := inputBillings.AsMessage()
+	actualNotification := inputInvoice.AsMessage()
 	assert.EqualValues(t, expectedNotification, actualNotification)
 }
