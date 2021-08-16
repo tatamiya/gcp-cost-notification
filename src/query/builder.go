@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/tatamiya/gcp-cost-notification/datetime"
+	"github.com/tatamiya/gcp-cost-notification/src/datetime"
 )
 
 type QueryBuilder struct {
@@ -26,7 +26,7 @@ func NewQueryBuilder() QueryBuilder {
 
 	return QueryBuilder{
 		tableID:      tableID,
-		templatePath: "./" + fileDir + "query/template.sql",
+		templatePath: "./" + fileDir + "src/query/template.sql",
 	}
 }
 

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tatamiya/gcp-cost-notification/datetime"
+	"github.com/tatamiya/gcp-cost-notification/src/datetime"
 )
 
 func TestRenderQueryFromTemplateCorrectly(t *testing.T) {

@@ -1,6 +1,6 @@
 package notification
 
-import "github.com/tatamiya/gcp-cost-notification/utils"
+import "github.com/tatamiya/gcp-cost-notification/src/utils"
 
 type SlackClientStub struct {
 	err *utils.CustomError

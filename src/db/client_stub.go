@@ -1,6 +1,6 @@
 package db
 
-import "github.com/tatamiya/gcp-cost-notification/utils"
+import "github.com/tatamiya/gcp-cost-notification/src/utils"
 
 type BQClientStub struct {
 	records []*QueryResult

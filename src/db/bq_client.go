@@ -7,7 +7,7 @@ import (
 
 	"cloud.google.com/go/bigquery"
 	"github.com/dustin/go-humanize"
-	"github.com/tatamiya/gcp-cost-notification/utils"
+	"github.com/tatamiya/gcp-cost-notification/src/utils"
 	"google.golang.org/api/iterator"
 )
 

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tatamiya/gcp-cost-notification/db"
+	"github.com/tatamiya/gcp-cost-notification/src/db"
 )
 
 func TestBillingPeriodIntoStringCorrectly(t *testing.T) {

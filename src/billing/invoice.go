@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tatamiya/gcp-cost-notification/datetime"
-	"github.com/tatamiya/gcp-cost-notification/db"
-	"github.com/tatamiya/gcp-cost-notification/utils"
+	"github.com/tatamiya/gcp-cost-notification/src/datetime"
+	"github.com/tatamiya/gcp-cost-notification/src/db"
+	"github.com/tatamiya/gcp-cost-notification/src/utils"
 )
 
 func NewResultValidationError(message string, err error) *utils.CustomError {

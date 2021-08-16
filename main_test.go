@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tatamiya/gcp-cost-notification/db"
-	"github.com/tatamiya/gcp-cost-notification/notification"
+	"github.com/tatamiya/gcp-cost-notification/src/db"
+	"github.com/tatamiya/gcp-cost-notification/src/notification"
 )
 
 var InputReportingDateTime time.Time = time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)

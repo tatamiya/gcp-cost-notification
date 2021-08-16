@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/slack-go/slack"
-	"github.com/tatamiya/gcp-cost-notification/utils"
+	"github.com/tatamiya/gcp-cost-notification/src/utils"
 )
 
 func NewSlackError(message string, err error) *utils.CustomError {
