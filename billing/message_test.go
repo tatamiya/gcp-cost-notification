@@ -49,7 +49,7 @@ func TestShowNoDetailWhenServiceCostIsEmpty(t *testing.T) {
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
-func TestCreateNotificationFromInvoice(t *testing.T) {
+func TestCreateMessageFromInvoice(t *testing.T) {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -62,7 +62,7 @@ func TestCreateNotificationFromInvoice(t *testing.T) {
 		},
 	}
 
-	expectedNotification :=
+	expectedMessage :=
 		`＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
 
 Total: ¥ 1,000.07 (¥ 400)
@@ -71,11 +71,11 @@ Total: ¥ 1,000.07 (¥ 400)
 Cloud SQL: ¥ 1,000 (¥ 400)
 BigQuery: ¥ 0.07 (¥ 0)`
 
-	actualNotification := inputInvoice.AsMessage()
-	assert.EqualValues(t, expectedNotification, actualNotification)
+	actualMessage := inputInvoice.AsMessage()
+	assert.EqualValues(t, expectedMessage, actualMessage)
 }
 
-func TestCreateNotificationFromInvoiceWithNoServiceCosts(t *testing.T) {
+func TestCreateMessageFromInvoiceWithNoServiceCosts(t *testing.T) {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -85,11 +85,11 @@ func TestCreateNotificationFromInvoiceWithNoServiceCosts(t *testing.T) {
 		Services: []*db.QueryResult{},
 	}
 
-	expectedNotification :=
+	expectedMessage :=
 		`＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
 
 Total: ¥ 0 (¥ 0)`
 
-	actualNotification := inputInvoice.AsMessage()
-	assert.EqualValues(t, expectedNotification, actualNotification)
+	actualMessage := inputInvoice.AsMessage()
+	assert.EqualValues(t, expectedMessage, actualMessage)
 }

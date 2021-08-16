@@ -78,13 +78,13 @@ func (b *Invoice) details() string {
 
 func (b *Invoice) AsMessage() string {
 
-	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
-	notification += b.Total.AsMessageLine()
+	message := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
+	message += b.Total.AsMessageLine()
 
 	if len(b.Services) > 0 {
-		notification += "\n\n" + "----- 内訳 -----" + "\n"
-		notification += b.details()
+		message += "\n\n" + "----- 内訳 -----" + "\n"
+		message += b.details()
 	}
 
-	return notification
+	return message
 }
