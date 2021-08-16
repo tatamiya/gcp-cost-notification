@@ -67,7 +67,7 @@ func NewInvoice(period *datetime.ReportingPeriod, queryResults []*db.QueryResult
 
 }
 
-func (b *Invoice) detailLines() string {
+func (b *Invoice) details() string {
 	serviceCosts := b.Services
 	var listOfLines []string
 	for _, cost := range serviceCosts {
@@ -83,7 +83,7 @@ func (b *Invoice) AsMessage() string {
 
 	if len(b.Services) > 0 {
 		notification += "\n\n" + "----- 内訳 -----" + "\n"
-		notification += b.detailLines()
+		notification += b.details()
 	}
 
 	return notification

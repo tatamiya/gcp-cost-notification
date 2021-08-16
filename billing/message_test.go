@@ -16,7 +16,7 @@ func TestBillingPeriodIntoStringCorrectly(t *testing.T) {
 	assert.EqualValues(t, "5/1 ~ 5/8", period.String())
 }
 
-func TestCreateDetailLinesCorrectly(t *testing.T) {
+func TestDescribeDetailsCorrectly(t *testing.T) {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -30,11 +30,11 @@ func TestCreateDetailLinesCorrectly(t *testing.T) {
 	}
 	expectedDetailLines := "Cloud SQL: ¥ 1,000 (¥ 400)\nBigQuery: ¥ 0.07 (¥ 0)"
 
-	actualDetailLines := inputInvoice.detailLines()
+	actualDetailLines := inputInvoice.details()
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
-func TestCreateBlankDetailLineWhenServiceCostIsEmpty(t *testing.T) {
+func TestShowNoDetailWhenServiceCostIsEmpty(t *testing.T) {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -45,7 +45,7 @@ func TestCreateBlankDetailLineWhenServiceCostIsEmpty(t *testing.T) {
 	}
 	expectedDetailLines := ""
 
-	actualDetailLines := inputInvoice.detailLines()
+	actualDetailLines := inputInvoice.details()
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
