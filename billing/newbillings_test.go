@@ -23,7 +23,7 @@ func TestCreateBillingsCorrectly(t *testing.T) {
 	}
 
 	expectedBillings := &Billings{
-		AggregationPeriod: AggregationPeriod{
+		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},

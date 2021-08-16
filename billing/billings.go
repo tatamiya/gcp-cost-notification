@@ -19,24 +19,24 @@ func NewResultParserError(message string, err error) *utils.CustomError {
 	}
 }
 
-type AggregationPeriod struct {
+type BillingPeriod struct {
 	From time.Time
 	To   time.Time
 }
 
-func (a *AggregationPeriod) String() string {
+func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
 }
 
 type Billings struct {
-	AggregationPeriod AggregationPeriod
-	Total             *db.QueryResult
-	Services          []*db.QueryResult
+	BillingPeriod BillingPeriod
+	Total         *db.QueryResult
+	Services      []*db.QueryResult
 }
 
 func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, *utils.CustomError) {
 
-	aggregationPeriod := AggregationPeriod{
+	billingPeriod := BillingPeriod{
 		From: period.From,
 		To:   period.To,
 	}
@@ -60,9 +60,9 @@ func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResul
 	}
 
 	return &Billings{
-		AggregationPeriod: aggregationPeriod,
-		Total:             totalCost,
-		Services:          serviceCosts,
+		BillingPeriod: billingPeriod,
+		Total:         totalCost,
+		Services:      serviceCosts,
 	}, nil
 
 }
@@ -78,7 +78,7 @@ func (b *Billings) detailLines() string {
 
 func (b *Billings) AsMessage() string {
 
-	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.AggregationPeriod)
+	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
 	notification += b.Total.AsMessageLine()
 
 	if len(b.Services) > 0 {
