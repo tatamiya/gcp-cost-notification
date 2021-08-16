@@ -28,13 +28,13 @@ func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
 }
 
-type Billings struct {
+type Invoice struct {
 	BillingPeriod BillingPeriod
 	Total         *db.QueryResult
 	Services      []*db.QueryResult
 }
 
-func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Billings, *utils.CustomError) {
+func NewInvoice(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Invoice, *utils.CustomError) {
 
 	billingPeriod := BillingPeriod{
 		From: period.From,
@@ -59,7 +59,7 @@ func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResul
 		serviceCosts = queryResults[1:]
 	}
 
-	return &Billings{
+	return &Invoice{
 		BillingPeriod: billingPeriod,
 		Total:         totalCost,
 		Services:      serviceCosts,
@@ -67,7 +67,7 @@ func NewBillings(period *datetime.ReportingPeriod, queryResults []*db.QueryResul
 
 }
 
-func (b *Billings) detailLines() string {
+func (b *Invoice) detailLines() string {
 	serviceCosts := b.Services
 	var listOfLines []string
 	for _, cost := range serviceCosts {
@@ -76,7 +76,7 @@ func (b *Billings) detailLines() string {
 	return strings.Join(listOfLines, "\n")
 }
 
-func (b *Billings) AsMessage() string {
+func (b *Invoice) AsMessage() string {
 
 	notification := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
 	notification += b.Total.AsMessageLine()

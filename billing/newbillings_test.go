@@ -22,7 +22,7 @@ func TestCreateBillingsCorrectly(t *testing.T) {
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 	}
 
-	expectedBillings := &Billings{
+	expectedInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
@@ -33,24 +33,24 @@ func TestCreateBillingsCorrectly(t *testing.T) {
 			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		},
 	}
-	actualBillings, err := NewBillings(&inputReportingPeriod, inputQueryResults)
+	actualInvoice, err := NewInvoice(&inputReportingPeriod, inputQueryResults)
 
 	assert.Nil(t, err)
-	assert.EqualValues(t, expectedBillings, actualBillings)
+	assert.EqualValues(t, expectedInvoice, actualInvoice)
 }
 
 func TestBillingsFromEmptyQueryResultHasZeroTotalCost(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{}
 
-	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
+	actualInvoice, err := NewInvoice(&InputReportingPeriod, inputQueryResults)
 
 	assert.Nil(t, err)
 	assert.EqualValues(
 		t,
 		db.QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.0},
-		*actualBillings.Total,
+		*actualInvoice.Total,
 	)
-	assert.EqualValues(t, []*db.QueryResult{}, actualBillings.Services)
+	assert.EqualValues(t, []*db.QueryResult{}, actualInvoice.Services)
 }
 
 func TestBillingsFromSingleElementQueryResultHasEmptyServiceCosts(t *testing.T) {
@@ -58,15 +58,15 @@ func TestBillingsFromSingleElementQueryResultHasEmptyServiceCosts(t *testing.T) 
 		{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
 	}
 
-	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
+	actualInvoice, err := NewInvoice(&InputReportingPeriod, inputQueryResults)
 
 	assert.Nil(t, err)
 	assert.EqualValues(
 		t,
 		db.QueryResult{Service: "Total", Monthly: 0.07, Yesterday: 0.0},
-		*actualBillings.Total,
+		*actualInvoice.Total,
 	)
-	assert.EqualValues(t, []*db.QueryResult{}, actualBillings.Services)
+	assert.EqualValues(t, []*db.QueryResult{}, actualInvoice.Services)
 }
 
 func TestNewBillingsReturnErrorWhenQueryResultsUnexpectedlyOrderd(t *testing.T) {
@@ -76,10 +76,10 @@ func TestNewBillingsReturnErrorWhenQueryResultsUnexpectedlyOrderd(t *testing.T) 
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
 
-	actualBillings, err := NewBillings(&InputReportingPeriod, inputQueryResults)
+	actualInvoice, err := NewInvoice(&InputReportingPeriod, inputQueryResults)
 
 	assert.NotNil(t, err)
-	assert.Nil(t, actualBillings)
+	assert.Nil(t, actualInvoice)
 	assert.EqualValues(t,
 		"Error in Query Results Validation. Unexpected query results! The results might not be correctly sorted!: First element of the query results was Cloud SQL, not Total",
 		err.Error(),

@@ -63,7 +63,7 @@ func mainProcess(
 		return "", err
 	}
 
-	billings, err := billing.NewBillings(&reportingPeriod, queryResult)
+	invoice, err := billing.NewInvoice(&reportingPeriod, queryResult)
 	if err != nil {
 		log.Print(err)
 		_, slackError := slackClient.Send(err)
@@ -73,7 +73,7 @@ func mainProcess(
 		return "", err
 	}
 
-	sentMessage, err := slackClient.Send(billings)
+	sentMessage, err := slackClient.Send(invoice)
 	if err != nil {
 		log.Print(err)
 		return "", err
