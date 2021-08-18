@@ -19,11 +19,13 @@ func newResultValidationError(message string, err error) *utils.CustomError {
 	}
 }
 
+// The date period to aggregate the GCP cost.
 type BillingPeriod struct {
 	From time.Time
 	To   time.Time
 }
 
+// Display the period in the "MM/DD ~ MM/DD" format.
 func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
 }
