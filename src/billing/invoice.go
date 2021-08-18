@@ -30,12 +30,20 @@ func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
 }
 
+// Invoice contains the data of the cost aggregation period,
+// the total cost, and costs for each service.
 type Invoice struct {
 	BillingPeriod BillingPeriod
 	Total         *db.QueryResult
 	Services      []*db.QueryResult
 }
 
+// NewInvoice constructs a new Invoice from cost reporting period and BigQuery Results.
+//
+// The first element of the BQ results should be the total cost.
+// If it is not, an error is returned.
+//
+// If the BQ result is empty, the new Invoice has 0 total cost and empty service costs.
 func NewInvoice(period *datetime.ReportingPeriod, queryResults []*db.QueryResult) (*Invoice, *utils.CustomError) {
 
 	billingPeriod := BillingPeriod{
@@ -78,6 +86,7 @@ func (b *Invoice) details() string {
 	return strings.Join(listOfLines, "\n")
 }
 
+// AsMessage creates a notification message of GCP costs from Invoice.
 func (b *Invoice) AsMessage() string {
 
 	message := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
