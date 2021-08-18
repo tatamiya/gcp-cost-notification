@@ -17,6 +17,15 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
+// The function called by Cloud Functions.
+// Get GCP cost from BigQuery and
+// send notification to Slack.
+//
+// The period of cost retrieval is
+// from the first date of the month
+// upto one day before the execution date.
+// If the execution date is the first date of the month,
+// the period is the previous month.
 func CostNotifier(ctx context.Context, m PubSubMessage) error {
 	tzConverter := datetime.NewTimeZoneConverter()
 	currentDateTime := tzConverter.From(time.Now())
