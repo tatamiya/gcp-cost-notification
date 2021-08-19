@@ -16,6 +16,16 @@ func TestBillingPeriodIntoStringCorrectly(t *testing.T) {
 	assert.EqualValues(t, "5/1 ~ 5/8", period.String())
 }
 
+func TestCreateSingleMessageLine(t *testing.T) {
+	sampleQueryResult := &Cost{
+		Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0,
+	}
+	expectedLine := "Cloud SQL: ¥ 1,000 (¥ 400)"
+	actualLine := sampleQueryResult.AsMessageLine()
+
+	assert.EqualValues(t, expectedLine, actualLine)
+}
+
 func TestDescribeDetailsCorrectly(t *testing.T) {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{

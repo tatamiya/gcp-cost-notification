@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/tatamiya/gcp-cost-notification/src/datetime"
 	"github.com/tatamiya/gcp-cost-notification/src/db"
 	"github.com/tatamiya/gcp-cost-notification/src/utils"
@@ -28,6 +29,20 @@ type BillingPeriod struct {
 // Display the period in the "MM/DD ~ MM/DD" format.
 func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
+}
+
+type Cost struct {
+	Service   string
+	Monthly   float32
+	Yesterday float32
+}
+
+func (r *Cost) AsMessageLine() string {
+	service := r.Service
+	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
+	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
+
+	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
 // Invoice contains the data of the cost aggregation period,
