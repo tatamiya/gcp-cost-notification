@@ -20,7 +20,7 @@ func TestCreateSingleMessageLine(t *testing.T) {
 		Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0,
 	}
 	expectedLine := "Cloud SQL: ¥ 1,000 (¥ 400)"
-	actualLine := sampleQueryResult.AsMessageLine()
+	actualLine := sampleQueryResult.asMessageLine()
 
 	assert.EqualValues(t, expectedLine, actualLine)
 }
