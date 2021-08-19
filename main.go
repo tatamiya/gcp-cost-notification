@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"cloud.google.com/go/pubsub"
 	"github.com/tatamiya/gcp-cost-notification/src/billing"
 	"github.com/tatamiya/gcp-cost-notification/src/datetime"
 	"github.com/tatamiya/gcp-cost-notification/src/db"
@@ -12,10 +13,6 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/src/query"
 	"github.com/tatamiya/gcp-cost-notification/src/utils"
 )
-
-type PubSubMessage struct {
-	Data []byte `json:"data"`
-}
 
 // The function called by Cloud Functions.
 // Get GCP cost from BigQuery and
@@ -26,7 +23,7 @@ type PubSubMessage struct {
 // upto one day before the execution date.
 // If the execution date is the first date of the month,
 // the period is the previous month.
-func CostNotifier(ctx context.Context, m PubSubMessage) error {
+func CostNotifier(ctx context.Context, m pubsub.Message) error {
 	tzConverter := datetime.NewTimeZoneConverter()
 	currentDateTime := tzConverter.From(time.Now())
 
