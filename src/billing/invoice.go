@@ -39,7 +39,7 @@ type Cost struct {
 	Yesterday float32
 }
 
-func (r *Cost) AsMessageLine() string {
+func (r *Cost) asMessageLine() string {
 	service := r.Service
 	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
 	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
@@ -99,7 +99,7 @@ func (b *Invoice) details() string {
 	serviceCosts := b.Services
 	var listOfLines []string
 	for _, cost := range serviceCosts {
-		listOfLines = append(listOfLines, cost.AsMessageLine())
+		listOfLines = append(listOfLines, cost.asMessageLine())
 	}
 	return strings.Join(listOfLines, "\n")
 }
@@ -108,7 +108,7 @@ func (b *Invoice) details() string {
 func (b *Invoice) AsMessage() string {
 
 	message := fmt.Sprintf("＜%s の GCP 利用料金＞ ※ () 内は前日分\n\n", &b.BillingPeriod)
-	message += b.Total.AsMessageLine()
+	message += b.Total.asMessageLine()
 
 	if len(b.Services) > 0 {
 		message += "\n\n" + "----- 内訳 -----" + "\n"
