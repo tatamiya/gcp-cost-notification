@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tatamiya/gcp-cost-notification/src/db"
 )
 
 func TestBillingPeriodIntoStringCorrectly(t *testing.T) {
@@ -32,8 +31,8 @@ func TestDescribeDetailsCorrectly(t *testing.T) {
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
-		Total: &db.QueryResult{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		Services: []*db.QueryResult{
+		Total: &Cost{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+		Services: []*Cost{
 			{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		},
@@ -50,8 +49,8 @@ func TestShowNoDetailWhenServiceCostIsEmpty(t *testing.T) {
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
-		Total:    &db.QueryResult{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		Services: []*db.QueryResult{},
+		Total:    &Cost{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+		Services: []*Cost{},
 	}
 	expectedDetailLines := ""
 
@@ -65,8 +64,8 @@ func TestCreateMessageFromInvoice(t *testing.T) {
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
-		Total: &db.QueryResult{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
-		Services: []*db.QueryResult{
+		Total: &Cost{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
+		Services: []*Cost{
 			{Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0},
 			{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		},
@@ -91,8 +90,8 @@ func TestCreateMessageFromInvoiceWithNoServiceCosts(t *testing.T) {
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 			To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 		},
-		Total:    &db.QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00},
-		Services: []*db.QueryResult{},
+		Total:    &Cost{Service: "Total", Monthly: 0.00, Yesterday: 0.00},
+		Services: []*Cost{},
 	}
 
 	expectedMessage :=

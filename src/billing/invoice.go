@@ -49,8 +49,8 @@ func (r *Cost) AsMessageLine() string {
 // the total cost, and costs for each service.
 type Invoice struct {
 	BillingPeriod BillingPeriod
-	Total         *db.QueryResult
-	Services      []*db.QueryResult
+	Total         *Cost
+	Services      []*Cost
 }
 
 // NewInvoice constructs a new Invoice from cost reporting period and BigQuery Results.
@@ -66,24 +66,25 @@ func NewInvoice(period *datetime.ReportingPeriod, queryResults []*db.QueryResult
 		To:   period.To,
 	}
 
-	var totalCost *db.QueryResult
-	var serviceCosts []*db.QueryResult
+	var totalCost *Cost
+	serviceCosts := []*Cost{}
 
 	if len(queryResults) == 0 {
-		totalCost = &db.QueryResult{Service: "Total", Monthly: 0.00, Yesterday: 0.00}
-		serviceCosts = []*db.QueryResult{}
+		totalCost = &Cost{Service: "Total", Monthly: 0.00, Yesterday: 0.00}
 	} else {
-		totalCost = queryResults[0]
-		if totalCost.Service != "Total" {
+		firstElement := queryResults[0]
+		if firstElement.Service != "Total" {
 			log.Printf("Unexpected query results: %v", queryResults)
 			return nil, newResultValidationError(
 				"Unexpected query results! The results might not be correctly sorted!",
-				fmt.Errorf("First element of the query results was %s, not Total", totalCost.Service),
+				fmt.Errorf("First element of the query results was %s, not Total", firstElement.Service),
 			)
 		}
-		serviceCosts = queryResults[1:]
+		totalCost = (*Cost)(firstElement)
+		for _, res := range queryResults[1:] {
+			serviceCosts = append(serviceCosts, (*Cost)(res))
+		}
 	}
-
 	return &Invoice{
 		BillingPeriod: billingPeriod,
 		Total:         totalCost,

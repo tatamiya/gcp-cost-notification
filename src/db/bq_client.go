@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"cloud.google.com/go/bigquery"
-	"github.com/dustin/go-humanize"
 	"github.com/tatamiya/gcp-cost-notification/src/utils"
 	"google.golang.org/api/iterator"
 )
@@ -27,14 +26,6 @@ type QueryResult struct {
 
 func (r *QueryResult) String() string {
 	return fmt.Sprintf("{Service: %s, Monthly: %f, Yesterday: %f}", r.Service, r.Monthly, r.Yesterday)
-}
-
-func (r *QueryResult) AsMessageLine() string {
-	service := r.Service
-	monthly := humanize.CommafWithDigits(float64(r.Monthly), 2)
-	yesterday := humanize.CommafWithDigits(float64(r.Yesterday), 2)
-
-	return fmt.Sprintf("%s: ¥ %s (¥ %s)", service, monthly, yesterday)
 }
 
 type BQClient struct {
