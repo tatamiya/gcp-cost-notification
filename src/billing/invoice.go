@@ -31,6 +31,8 @@ func (a *BillingPeriod) String() string {
 	return fmt.Sprintf("%d/%d ~ %d/%d", a.From.Month(), a.From.Day(), a.To.Month(), a.To.Day())
 }
 
+// Cost contains the service name, monthly sum of the cost,
+// and the cost on the most recent date.
 type Cost struct {
 	Service   string
 	Monthly   float32
