@@ -1,18 +1,21 @@
 package billing
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBillingPeriodIntoStringCorrectly(t *testing.T) {
+func ExampleBillingPeriod_String() {
 	period := BillingPeriod{
 		From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
 		To:   time.Date(2021, 5, 8, 0, 0, 0, 0, time.Local),
 	}
-	assert.EqualValues(t, "5/1 ~ 5/8", period.String())
+	fmt.Println(period.String())
+	// Output: 5/1 ~ 5/8
+
 }
 
 func TestCreateSingleMessageLine(t *testing.T) {
