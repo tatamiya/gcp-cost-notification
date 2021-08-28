@@ -1,3 +1,10 @@
+// GCP cost notification system using Cloud Functions.
+// Cloud Functions is triggered by Pub/Sub
+// scheduled by Cloud Scheduler.
+// The function sends query to BigQuery
+// and retrieve monthly GCP cost and that of the day before.
+// Then, the system creates a message from the query result
+// and sends it to Slack.
 package gcp_cost_notification
 
 import (
