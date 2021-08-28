@@ -61,7 +61,7 @@ func TestShowNoDetailWhenServiceCostIsEmpty(t *testing.T) {
 	assert.EqualValues(t, expectedDetailLines, actualDetailLines)
 }
 
-func TestCreateMessageFromInvoice(t *testing.T) {
+func ExampleInvoice_AsMessage() {
 	inputInvoice := &Invoice{
 		BillingPeriod: BillingPeriod{
 			From: time.Date(2021, 5, 1, 0, 0, 0, 0, time.Local),
@@ -74,17 +74,15 @@ func TestCreateMessageFromInvoice(t *testing.T) {
 		},
 	}
 
-	expectedMessage :=
-		`＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
-
-Total: ¥ 1,000.07 (¥ 400)
-
------ 内訳 -----
-Cloud SQL: ¥ 1,000 (¥ 400)
-BigQuery: ¥ 0.07 (¥ 0)`
-
-	actualMessage := inputInvoice.AsMessage()
-	assert.EqualValues(t, expectedMessage, actualMessage)
+	fmt.Println(inputInvoice.AsMessage())
+	// Output:
+	// ＜5/1 ~ 5/8 の GCP 利用料金＞ ※ () 内は前日分
+	//
+	// Total: ¥ 1,000.07 (¥ 400)
+	//
+	// ----- 内訳 -----
+	// Cloud SQL: ¥ 1,000 (¥ 400)
+	// BigQuery: ¥ 0.07 (¥ 0)
 }
 
 func TestCreateMessageFromInvoiceWithNoServiceCosts(t *testing.T) {
