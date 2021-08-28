@@ -19,11 +19,11 @@ func ExampleBillingPeriod_String() {
 }
 
 func TestCreateSingleMessageLine(t *testing.T) {
-	sampleQueryResult := &Cost{
+	sampleCost := &Cost{
 		Service: "Cloud SQL", Monthly: 1000.0, Yesterday: 400.0,
 	}
 	expectedLine := "Cloud SQL: ¥ 1,000 (¥ 400)"
-	actualLine := sampleQueryResult.asMessageLine()
+	actualLine := sampleCost.asMessageLine()
 
 	assert.EqualValues(t, expectedLine, actualLine)
 }
