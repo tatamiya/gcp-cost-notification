@@ -1,3 +1,7 @@
+// billing package defines objects to represent an invoice.
+//
+// Invoice object is created from BigQuery results
+// and then converted into a notification message sent to Slack.
 package billing
 
 import (
