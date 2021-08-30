@@ -6,10 +6,15 @@ import (
 	"time"
 )
 
+// TimeZoneConverter is an object to convert the timezone of an Time object
+// to that of the designated location.
 type TimeZoneConverter struct {
 	location *time.Location
 }
 
+// NewTimeZoneConverter constructs a TimeZoneConverter to
+// convert the timezone into the location designated in the
+// global enviroment variable.
 func NewTimeZoneConverter() TimeZoneConverter {
 	timeZone := os.Getenv("TIMEZONE")
 	location, err := time.LoadLocation(timeZone)
@@ -23,6 +28,7 @@ func NewTimeZoneConverter() TimeZoneConverter {
 	}
 }
 
+// From method converts the timezone of an input Time.
 func (t *TimeZoneConverter) From(datetime time.Time) time.Time {
 	return datetime.In(t.location)
 }
