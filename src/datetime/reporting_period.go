@@ -1,3 +1,5 @@
+// datetime package implements a timezone converter and
+// an object to contain reporting period.
 package datetime
 
 import "time"
