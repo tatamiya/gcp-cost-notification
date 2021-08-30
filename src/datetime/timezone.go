@@ -21,7 +21,7 @@ func NewTimeZoneConverter() TimeZoneConverter {
 	if err != nil {
 		log.Printf("Failed in setting timezone from environment variable '%s': %s", timeZone, err.Error())
 		location = time.Local
-		log.Printf("Runtime local timezone '%s' is set instead.", location.String())
+		log.Printf("Runtime local timezone '%s' is set instead.", location)
 	}
 	return TimeZoneConverter{
 		location: location,
