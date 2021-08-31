@@ -9,7 +9,29 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tatamiya/gcp-cost-notification/src/db"
 	"github.com/tatamiya/gcp-cost-notification/src/notification"
+	"github.com/tatamiya/gcp-cost-notification/src/utils"
 )
+
+type bqClientStub struct {
+	records []*db.QueryResult
+	err     *utils.CustomError
+}
+
+func newBQClientStub(results []*db.QueryResult, err error) bqClientStub {
+	var queryError *utils.CustomError
+	if err == nil {
+		queryError = nil
+	} else {
+		queryError = db.NewQueryError("Failed", err)
+	}
+	return bqClientStub{
+		records: results,
+		err:     queryError,
+	}
+}
+func (c *bqClientStub) SendQuery(query string) ([]*db.QueryResult, *utils.CustomError) {
+	return c.records, c.err
+}
 
 var InputReportingDateTime time.Time = time.Date(2021, 8, 7, 20, 15, 0, 0, time.Local)
 var InputQueryResults []*db.QueryResult = []*db.QueryResult{
@@ -22,7 +44,7 @@ func TestRunWholeProcessCorrectly(t *testing.T) {
 
 	reportingDateTime := InputReportingDateTime
 	inputQueryResults := InputQueryResults
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	BQClientStub := newBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	expectedMessage :=
@@ -44,7 +66,7 @@ func TestDisplayPreviousMonthConstsOnFirstDayOfMonth(t *testing.T) {
 
 	reportingDateTime := time.Date(2021, 8, 1, 0, 0, 0, 0, time.Local)
 
-	BQClientStub := db.NewBQClientStub(InputQueryResults, nil)
+	BQClientStub := newBQClientStub(InputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	actualMessage, err := mainProcess(reportingDateTime, &BQClientStub, &SlackClientStub)
@@ -58,7 +80,7 @@ func TestNotDisplayServiceCostsWhenQueryResultHasNoServiceCosts(t *testing.T) {
 	inputQueryResults := []*db.QueryResult{
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	BQClientStub := newBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	expectedMessage :=
@@ -73,7 +95,7 @@ func TestNotDisplayServiceCostsWhenQueryResultHasNoServiceCosts(t *testing.T) {
 func TestDisplayZeroTotalCostWhenQueryResultIsEmpty(t *testing.T) {
 
 	inputQueryResults := []*db.QueryResult{}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	BQClientStub := newBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	expectedMessage :=
@@ -92,7 +114,7 @@ func TestReturnErrorWhenQueryResultIsUnexpectedlyOrdered(t *testing.T) {
 		{Service: "BigQuery", Monthly: 0.07, Yesterday: 0.0},
 		{Service: "Total", Monthly: 1000.07, Yesterday: 400.0},
 	}
-	BQClientStub := db.NewBQClientStub(inputQueryResults, nil)
+	BQClientStub := newBQClientStub(inputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
@@ -104,7 +126,7 @@ func TestReturnErrorWhenQueryResultIsUnexpectedlyOrdered(t *testing.T) {
 
 func TestReturnErrorWhenBQFailed(t *testing.T) {
 
-	BQClientStub := db.NewBQClientStub([]*db.QueryResult{}, fmt.Errorf("Something Happened!"))
+	BQClientStub := newBQClientStub([]*db.QueryResult{}, fmt.Errorf("Something Happened!"))
 	SlackClientStub := notification.NewSlackClientStub(nil)
 
 	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
@@ -116,7 +138,7 @@ func TestReturnErrorWhenBQFailed(t *testing.T) {
 
 func TestReturnErrorWhenSlackNotificationFailed(t *testing.T) {
 
-	BQClientStub := db.NewBQClientStub(InputQueryResults, nil)
+	BQClientStub := newBQClientStub(InputQueryResults, nil)
 	SlackClientStub := notification.NewSlackClientStub(fmt.Errorf("Something Happened!"))
 
 	actualMessage, err := mainProcess(InputReportingDateTime, &BQClientStub, &SlackClientStub)
