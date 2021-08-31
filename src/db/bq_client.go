@@ -1,3 +1,4 @@
+// db package implements objects to send a query to BigQuery.
 package db
 
 import (
