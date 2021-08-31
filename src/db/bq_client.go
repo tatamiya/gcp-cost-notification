@@ -20,19 +20,24 @@ func NewQueryError(message string, err error) *utils.CustomError {
 }
 
 type QueryResult struct {
-	Service   string
-	Monthly   float32
-	Yesterday float32
+	Service   string  // GCP service name
+	Monthly   float32 // Monthly cost
+	Yesterday float32 // The cost in the day before
 }
 
 func (r *QueryResult) String() string {
 	return fmt.Sprintf("{Service: %s, Monthly: %f, Yesterday: %f}", r.Service, r.Monthly, r.Yesterday)
 }
 
+// BQClient is an object to connect to BigQuery and send a query
+// to retrieve the GCP cost.
 type BQClient struct {
 	client *bigquery.Client
 }
 
+// NewBQClient constructs a BQClient object.
+// The GCP project name of BQ is fetched from the
+// environmental variable.
 func NewBQClient() BQClient {
 	projectID := os.Getenv("GCP_PROJECT")
 	ctx := context.Background()
@@ -44,6 +49,8 @@ func NewBQClient() BQClient {
 	return BQClient{client: client}
 }
 
+// SendQuery receives a query as a string and send it to BQ
+// to retrieve the GCP cost.
 func (c *BQClient) SendQuery(query string) ([]*QueryResult, *utils.CustomError) {
 	var queryResults []*QueryResult
 
