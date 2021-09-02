@@ -12,11 +12,20 @@ import (
 	"github.com/tatamiya/gcp-cost-notification/src/datetime"
 )
 
+// QueryBuilder is an object to build a query from a template.
 type QueryBuilder struct {
 	tableID      string
 	templatePath string
 }
 
+// NewQueryBuilder constructs QueryBuilder.
+//
+// Four environment variables are needed in construction.
+//
+// `GCP_PROJECT`, `DATASET_NAME`, `TABLE_NAME` ... identify the table to retrieve the cost from.
+//
+// `FILE_DIRECTORY` ... the directory name where a query template file `template.sql` is.
+// On Cloud Functions, it must be `serverless_function_source_code/`.
 func NewQueryBuilder() QueryBuilder {
 
 	projectID := os.Getenv("GCP_PROJECT")
@@ -32,6 +41,7 @@ func NewQueryBuilder() QueryBuilder {
 	}
 }
 
+// Build method renders a query tamplate with the cost aggregation period to report and BQ table ID.
 func (b *QueryBuilder) Build(period datetime.ReportingPeriod) string {
 
 	reportingToTimestamp := period.To.Format(time.RFC3339)
