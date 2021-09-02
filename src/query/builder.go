@@ -1,3 +1,5 @@
+// query package implements a object build a query to retrieve
+// GCP cost from BigQuery.
 package query
 
 import (
